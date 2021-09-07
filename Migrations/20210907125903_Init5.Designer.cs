@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Garage3.Migrations
 {
     [DbContext(typeof(Garage3Context))]
-    [Migration("20210907081433_Init3")]
-    partial class Init3
+    [Migration("20210907125903_Init5")]
+    partial class Init5
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,6 +40,40 @@ namespace Garage3.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Garages");
+                });
+
+            modelBuilder.Entity("Garage3.Models.ParkedVehicle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ChargeAmount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CheckInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CheckOutTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PersonId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("ParkedVehicle");
                 });
 
             modelBuilder.Entity("Garage3.Models.Person", b =>
@@ -79,17 +113,15 @@ namespace Garage3.Migrations
                     b.Property<int>("GarageId")
                         .HasColumnType("int");
 
-                    b.Property<int>("State")
+                    b.Property<int>("InUse")
                         .HasColumnType("int");
 
-                    b.Property<int>("VehicleId")
+                    b.Property<int>("No")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("GarageId");
-
-                    b.HasIndex("VehicleId");
 
                     b.ToTable("Slots");
                 });
@@ -100,12 +132,6 @@ namespace Garage3.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CheckInTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CheckOuTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("Color")
                         .HasColumnType("int");
@@ -120,9 +146,6 @@ namespace Garage3.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PersonId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("State")
                         .HasColumnType("int");
 
                     b.Property<int>("VehicleTypeId")
@@ -155,6 +178,40 @@ namespace Garage3.Migrations
                     b.ToTable("VehicleTypes");
                 });
 
+            modelBuilder.Entity("ParkedVehicleSlot", b =>
+                {
+                    b.Property<int>("ParkedVehiclesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SlotsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ParkedVehiclesId", "SlotsId");
+
+                    b.HasIndex("SlotsId");
+
+                    b.ToTable("ParkedVehicleSlot");
+                });
+
+            modelBuilder.Entity("Garage3.Models.ParkedVehicle", b =>
+                {
+                    b.HasOne("Garage3.Models.Person", "Person")
+                        .WithMany("ParkedVehicles")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Garage3.Models.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Person");
+
+                    b.Navigation("Vehicle");
+                });
+
             modelBuilder.Entity("Garage3.Models.Slot", b =>
                 {
                     b.HasOne("Garage3.Models.Garage", "Garage")
@@ -163,15 +220,7 @@ namespace Garage3.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Garage3.Models.Vehicle", "Vehicle")
-                        .WithMany("Slots")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Garage");
-
-                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("Garage3.Models.Vehicle", b =>
@@ -193,6 +242,21 @@ namespace Garage3.Migrations
                     b.Navigation("VehicleType");
                 });
 
+            modelBuilder.Entity("ParkedVehicleSlot", b =>
+                {
+                    b.HasOne("Garage3.Models.ParkedVehicle", null)
+                        .WithMany()
+                        .HasForeignKey("ParkedVehiclesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Garage3.Models.Slot", null)
+                        .WithMany()
+                        .HasForeignKey("SlotsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Garage3.Models.Garage", b =>
                 {
                     b.Navigation("Slots");
@@ -200,12 +264,9 @@ namespace Garage3.Migrations
 
             modelBuilder.Entity("Garage3.Models.Person", b =>
                 {
-                    b.Navigation("Vehicles");
-                });
+                    b.Navigation("ParkedVehicles");
 
-            modelBuilder.Entity("Garage3.Models.Vehicle", b =>
-                {
-                    b.Navigation("Slots");
+                    b.Navigation("Vehicles");
                 });
 
             modelBuilder.Entity("Garage3.Models.VehicleType", b =>

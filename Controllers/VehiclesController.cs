@@ -164,7 +164,7 @@ namespace Garage3.Controllers
 			if (id <= 0) return false;
 			var pv = await _context.Vehicles.FirstOrDefaultAsync(v=>v.Id == id);
 			if (pv == null) return false;
-			if (pv.State != (int)VehicleState.UnParked) return false;
+//			if (pv.State != (int)VehicleState.UnParked) return false;
 
 			// ADD LOGIC TO GET PARKING SLOTS
 
@@ -174,7 +174,7 @@ namespace Garage3.Controllers
 			//VehicleSlot
 			
 
-			pv.State = (int)VehicleState.Parked;
+//			pv.State = (int)VehicleState.Parked;
 			_context.Vehicles.Update(pv);
 
 			return true;
@@ -183,11 +183,11 @@ namespace Garage3.Controllers
 		// Verify success unparking by checking the State property to be unparked
 		private async Task UnParkVehicle(Vehicle vehicle)
 		{
-			if (vehicle.State != (int)VehicleState.Parked) return;
+//			if (vehicle.State != (int)VehicleState.Parked) return;
 
 			// ADD LOGIC TO FREE PARKING SLOTS
 
-			vehicle.State = (int)VehicleState.UnParked;
+//			vehicle.State = (int)VehicleState.UnParked;
 		}
 	}
 }

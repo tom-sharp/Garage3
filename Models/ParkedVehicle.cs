@@ -14,14 +14,14 @@ namespace Garage3.Models
 		public int VehicleId { get; set; }
 		public Vehicle Vehicle { get; set; }
 
-		[DataType(DataType.DateTime)]
-		[Display(Name = "Check-in Time")]
-		[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}")]
+		//[DataType(DataType.DateTime)]
+		//[Display(Name = "Check-in Time")]
+		//[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}")]
 
 		public DateTime CheckInTime { get; set; }
-		[DataType(DataType.DateTime)]
-		[Display(Name = "Check-in Time")]
-		[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}")]
+		//[DataType(DataType.DateTime)]
+		//[Display(Name = "Check-in Time")]
+		//[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}")]
 
 		public DateTime CheckOutTime { get; set; }
 

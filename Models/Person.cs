@@ -19,7 +19,7 @@ namespace Garage3.Models
 		[Display(Name = "Social Security Number")]
 		public string SSN { get; set; } // Social Security Number
 		
-		[DataType(DataType.Date)]
+//		[DataType(DataType.Date)]
 		public DateTime BirthDate  { get; set; }
 		
 		public int MemberType { get; set; }
