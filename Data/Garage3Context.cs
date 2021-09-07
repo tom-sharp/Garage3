@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Garage3.Models;
+using Garage3.Models.ViewModels;
 
 namespace Garage3.Data
 {

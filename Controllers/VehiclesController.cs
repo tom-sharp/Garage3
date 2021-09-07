@@ -19,6 +19,8 @@ namespace Garage3.Controllers
             _context = context;
         }
 
+        
+
         // GET: Vehicles
         public async Task<IActionResult> Index()
         {
@@ -43,6 +45,11 @@ namespace Garage3.Controllers
             }
 
             return View(vehicle);
+        }
+
+        public IActionResult CheckIn()
+        {
+            return View();
         }
 
         // GET: Vehicles/Create

@@ -11,7 +11,7 @@ namespace Garage3.Models
 		public int Size { get; set; }		// size in slots
 		public string Name { get; set; }    // Boat, car..
 
-		public Vehicle Vehicle{ get; set; }
+		public ICollection<Vehicle>  Vehicle{ get; set; }
 
 	}
 }

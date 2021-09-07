@@ -25,7 +25,7 @@ namespace Garage3.Models
 
         public int VehicleTypeId { get; set; }
 
-		public ICollection<VehicleType> VehicleType { get; set; }
+		public VehicleType VehicleType { get; set; }
 
 		public int PersonId { get; set; }
 		public Person Person { get; set; }
