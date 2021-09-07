@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Garage3.Models
 {
-	public class VehicleType
+	public class VehicleTypesViewModel
 	{
 		public int Id { get; set; }
-
-		[Range(1, 3)]
-		public int Size { get; set; }       // size in slots
-
-		[MinLength(4), MaxLength(50)]
 		public string Name { get; set; }    // Boat, car..
-
+		public int Size { get; set; }		// size in slots
 		public ICollection<Vehicle> Vehicle{ get; set; }
 
 	}
