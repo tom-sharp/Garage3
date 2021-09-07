@@ -15,23 +15,23 @@ namespace Garage3.Models
 
 	public class Slot
 	{
-		public int Id { get; set; }
-		public int State { get; set; }          // 0= Free, 1= InUse, 2 = Reserved
+		//public int Id { get; set; }
+		//public int State { get; set; }          // 0= Free, 1= InUse, 2 = Reserved
 
-		public int VehicleId { get; set; }      // this makes a vehicle mandatory on a slot
-		public Vehicle Vehicle { get; set; }
-
-		public int GarageId { get; set; }
-		public Garage Garage { get; set; }
-
-		//public int Id { get; set; }             // this is only used with DB reference and not guaranteed på be continous
-
-		//public int No { get; set; }			// Slot numbering for the garage (parking space number)
-		//public int InUse { get; set; }          // -1 = Reserved, 0= Free, 1..n = InUse(0..slotsize), 
-
-		//public ICollection<Vehicle> Vehicles { get; set; }
+		//public int VehicleId { get; set; }      // this makes a vehicle mandatory on a slot
+		//public Vehicle Vehicle { get; set; }
 
 		//public int GarageId { get; set; }
 		//public Garage Garage { get; set; }
+
+		public int Id { get; set; }             // this is only used with DB reference and not guaranteed på be continous
+
+		public int No { get; set; }         // Slot numbering for the garage (parking space number)
+		public int InUse { get; set; }          // -1 = Reserved, 0= Free, 1..n = InUse(0..slotsize), 
+
+		public ICollection<ParkedVehicle> ParkedVehicles { get; set; }
+
+		public int GarageId { get; set; }
+		public Garage Garage { get; set; }
 	}
 }

@@ -158,6 +158,7 @@ namespace Garage3.Controllers
 		}
 
 		// Verify success parking by checking the State property to be parked
+
 		private async Task<bool> ParkVehicle(int id)
 		{
 			if (id <= 0) return false;
@@ -166,6 +167,12 @@ namespace Garage3.Controllers
 			if (pv.State != (int)VehicleState.UnParked) return false;
 
 			// ADD LOGIC TO GET PARKING SLOTS
+
+			//vehicle.slots.Add(slots)
+			//slot.add(vehicle)
+
+			//VehicleSlot
+			
 
 			pv.State = (int)VehicleState.Parked;
 			_context.Vehicles.Update(pv);
