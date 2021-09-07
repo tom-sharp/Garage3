@@ -40,9 +40,7 @@ namespace Garage3.Controllers
 		}
 
 		// GET: Garages
-		public IActionResult Index() {
-			return View();
-		}
+		public IActionResult Index() { return View(); }
 
 
 		// List Garages
@@ -90,10 +88,7 @@ namespace Garage3.Controllers
 		// GET: Garages/Edit/5
 		public async Task<IActionResult> GarageEdit(int? id)
 		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+			if ((id == null) || (id <= 0)) return View("GarageList");
 
 			var garage = await _context.Garages.FindAsync(id);
 			if (garage == null)
@@ -157,10 +152,7 @@ namespace Garage3.Controllers
 		// GET: Garages/Delete/5
 		public async Task<IActionResult> GarageDelete(int? id)
 		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+			if ((id == null) || (id <= 0)) return View("GarageList");
 
 			var garage = await _context.Garages
 				.FirstOrDefaultAsync(m => m.Id == id);
@@ -177,10 +169,11 @@ namespace Garage3.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
 		{
+			if (id <= 0) return View("GarageList");
 			var garage = await _context.Garages.FindAsync(id);
 			_context.Garages.Remove(garage);
 			await _context.SaveChangesAsync();
-			return RedirectToAction(nameof(Index));
+			return View("GarageList");
 		}
 
 		private bool GarageExists(int id)

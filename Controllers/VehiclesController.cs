@@ -158,13 +158,19 @@ namespace Garage3.Controllers
 		}
 
 		// Verify success parking by checking the State property to be parked
-		private async Task ParkVehicle(Vehicle vehicle)
+		private async Task<bool> ParkVehicle(int id)
 		{
-			if (vehicle.State != (int)VehicleState.UnParked) return;
+			if (id <= 0) return false;
+			var pv = await _context.Vehicles.FirstOrDefaultAsync(v=>v.Id == id);
+			if (pv == null) return false;
+			if (pv.State != (int)VehicleState.UnParked) return false;
 
 			// ADD LOGIC TO GET PARKING SLOTS
 
-			vehicle.State = (int)VehicleState.Parked;
+			pv.State = (int)VehicleState.Parked;
+			_context.Vehicles.Update(pv);
+
+			return true;
 		}
 
 		// Verify success unparking by checking the State property to be unparked
@@ -174,7 +180,7 @@ namespace Garage3.Controllers
 
 			// ADD LOGIC TO FREE PARKING SLOTS
 
-			vehicle.State = (int)VehicleState.Parked;
+			vehicle.State = (int)VehicleState.UnParked;
 		}
 	}
 }
