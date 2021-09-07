@@ -65,7 +65,7 @@ namespace Garage3.Controllers
 			{
 				var newgarage = new Garage() {Name = g.Name, Size = g.Size, SlotSize = g.SlotSize };
 				_context.Add(newgarage);
-				
+
 				// ADD SOME CODE HERE TO HANDLE FAILURE
 				await _context.SaveChangesAsync();
 
