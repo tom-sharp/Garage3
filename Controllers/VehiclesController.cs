@@ -157,12 +157,25 @@ namespace Garage3.Controllers
 			return _context.Vehicles.Any(e => e.Id == id);
 		}
 
-		private async Task<bool> ParkVehicle(Vehicle vehicle)
+		// Verify success parking by checking the State property to be parked
+		private async Task ParkVehicle(Vehicle vehicle)
 		{
-			return false;
+			if (vehicle.State != (int)VehicleState.UnParked) return;
+
+			// ADD LOGIC TO GET PARKING SLOTS
+
+			vehicle.State = (int)VehicleState.Parked;
 		}
+
+		// Verify success unparking by checking the State property to be unparked
 		private async Task UnParkVehicle(Vehicle vehicle)
 		{
+			if (vehicle.State != (int)VehicleState.Parked) return;
+
+			// ADD LOGIC TO FREE PARKING SLOTS
+
+			vehicle.State = (int)VehicleState.Parked;
 		}
 	}
 }
+
