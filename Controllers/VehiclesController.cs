@@ -156,5 +156,13 @@ namespace Garage3.Controllers
         {
             return _context.Vehicles.Any(e => e.Id == id);
         }
-    }
+
+		private async Task<bool> ParkVehicle(Vehicle vehicle)
+		{
+			return false;
+		}
+		private async Task UnParkVehicle(Vehicle vehicle)
+		{
+		}
+	}
 }
