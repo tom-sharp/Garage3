@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Garage3.Migrations
 {
     [DbContext(typeof(Garage3Context))]
-    [Migration("20210906125422_Init")]
-    partial class Init
+    [Migration("20210907081433_Init3")]
+    partial class Init3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -110,6 +110,9 @@ namespace Garage3.Migrations
                     b.Property<int>("Color")
                         .HasColumnType("int");
 
+                    b.Property<string>("LicensePlate")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Make")
                         .HasColumnType("nvarchar(max)");
 
@@ -129,6 +132,8 @@ namespace Garage3.Migrations
 
                     b.HasIndex("PersonId");
 
+                    b.HasIndex("VehicleTypeId");
+
                     b.ToTable("Vehicles");
                 });
 
@@ -145,12 +150,7 @@ namespace Garage3.Migrations
                     b.Property<int>("Size")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VehicleId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("VehicleId");
 
                     b.ToTable("VehicleTypes");
                 });
@@ -182,16 +182,15 @@ namespace Garage3.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Garage3.Models.VehicleType", "VehicleType")
+                        .WithMany("Vehicle")
+                        .HasForeignKey("VehicleTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Person");
-                });
 
-            modelBuilder.Entity("Garage3.Models.VehicleType", b =>
-                {
-                    b.HasOne("Garage3.Models.Vehicle", "Vehicle")
-                        .WithMany("VehicleType")
-                        .HasForeignKey("VehicleId");
-
-                    b.Navigation("Vehicle");
+                    b.Navigation("VehicleType");
                 });
 
             modelBuilder.Entity("Garage3.Models.Garage", b =>
@@ -207,8 +206,11 @@ namespace Garage3.Migrations
             modelBuilder.Entity("Garage3.Models.Vehicle", b =>
                 {
                     b.Navigation("Slots");
+                });
 
-                    b.Navigation("VehicleType");
+            modelBuilder.Entity("Garage3.Models.VehicleType", b =>
+                {
+                    b.Navigation("Vehicle");
                 });
 #pragma warning restore 612, 618
         }
