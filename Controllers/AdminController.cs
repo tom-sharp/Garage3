@@ -180,5 +180,17 @@ namespace Garage3.Controllers
 		{
 			return _context.Garages.Any(e => e.Id == id);
 		}
+
+		// List VehicleTypes
+		public async Task<IActionResult> VehicleTypesList()
+		{
+			var model = _context.VehicleTypes.OrderBy(v => v.Name).Select(v => new VehicleTypesViewModel());
+			return View(await model.ToListAsync());
+
+		}
+
+
 	}
+
+	
 }
