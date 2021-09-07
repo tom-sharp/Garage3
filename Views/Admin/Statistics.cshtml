@@ -1,0 +1,88 @@
+﻿@model StatisticsViewModel
+
+
+<h1>Statistics</h1>
+
+<div>
+
+    <hr />
+
+    <div class="container"> <!-- Stats Container -->
+
+        <div class="row">
+
+            <div class="col-lg-3 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Vehicles Total</h5>
+                        <p class="display-4">
+                            @Model.NoTotalVehicles
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Garage Turnover</h5>
+                        <p class="display-4">
+                            @Model.GarageTurnOver kr
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Number of Wheels</h5>
+                        <p class="display-4">
+                            @Model.NoOfWheels
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Average Time (hrs)</h5>
+                        <p class="display-4">
+                            @Model.AvgParkingTime
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- End Row -->
+
+    </div> <!-- End Stats Container -->
+
+    <hr />
+   
+    <div class="container"> <!-- Graphs Container -->
+
+        <div class="row">
+            <div class="col-lg-7 bg-light">
+                <canvas id="doughnutChart" height="200"></canvas>
+            </div>
+            
+            <div class="col-lg-5 bg-light">
+                <canvas id="horizontalBar" height="200"></canvas>
+            </div>
+
+        </div> <!-- End Row -->
+
+    </div> <!-- End Graphs Container -->
+
+    <script>
+
+        doughnutgraph(@Model.NoOfCars, @Model.NoOfMotorCycles, @Model.NoOfTrucks, @Model.NoOfBuses, @Model.NoOfBoats);
+
+        horizontalbargraph(@Model.NoOfBlack, @Model.NoOfBlue, @Model.NoOfGreen, @Model.NoOfRed, @Model.NoOfSilver, @Model.NoOfUnknown, @Model.NoOfWhite, @Model.NoOfYellow);
+
+    </script>
+
+</div>
+
