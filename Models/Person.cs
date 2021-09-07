@@ -16,6 +16,8 @@ namespace Garage3.Models
 		[Display(Name = "Last Name")]
 		public string LastName { get; set; }
 		
+		public string Email { get; set; }
+
 		[Display(Name = "Social Security Number")]
 		public string SSN { get; set; } // Social Security Number
 		
@@ -25,7 +27,6 @@ namespace Garage3.Models
 		public int MemberType { get; set; }
 
 		public ICollection<Vehicle> Vehicles { get; set; }
-		public ICollection<ParkedVehicle> ParkedVehicles { get; set; }
 
 	}
 }

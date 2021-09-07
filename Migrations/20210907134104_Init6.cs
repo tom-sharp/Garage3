@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Garage3.Migrations
 {
-    public partial class Init5 : Migration
+    public partial class Init6 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -85,7 +85,11 @@ namespace Garage3.Migrations
                     Color = table.Column<int>(type: "int", nullable: false),
                     LicensePlate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     VehicleTypeId = table.Column<int>(type: "int", nullable: false),
-                    PersonId = table.Column<int>(type: "int", nullable: false)
+                    PersonId = table.Column<int>(type: "int", nullable: false),
+                    CheckInTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CheckOutTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ChargeAmount = table.Column<int>(type: "int", nullable: false),
+                    State = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -105,78 +109,38 @@ namespace Garage3.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ParkedVehicle",
+                name: "SlotVehicle",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    VehicleId = table.Column<int>(type: "int", nullable: false),
-                    CheckInTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CheckOutTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PersonId = table.Column<int>(type: "int", nullable: false),
-                    ChargeAmount = table.Column<int>(type: "int", nullable: false),
-                    State = table.Column<int>(type: "int", nullable: false)
+                    SlotsId = table.Column<int>(type: "int", nullable: false),
+                    VehiclesId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ParkedVehicle", x => x.Id);
+                    table.PrimaryKey("PK_SlotVehicle", x => new { x.SlotsId, x.VehiclesId });
                     table.ForeignKey(
-                        name: "FK_ParkedVehicle_Persons_PersonId",
-                        column: x => x.PersonId,
-                        principalTable: "Persons",
+                        name: "FK_SlotVehicle_Slots_SlotsId",
+                        column: x => x.SlotsId,
+                        principalTable: "Slots",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ParkedVehicle_Vehicles_VehicleId",
-                        column: x => x.VehicleId,
+                        name: "FK_SlotVehicle_Vehicles_VehiclesId",
+                        column: x => x.VehiclesId,
                         principalTable: "Vehicles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "ParkedVehicleSlot",
-                columns: table => new
-                {
-                    ParkedVehiclesId = table.Column<int>(type: "int", nullable: false),
-                    SlotsId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ParkedVehicleSlot", x => new { x.ParkedVehiclesId, x.SlotsId });
-                    table.ForeignKey(
-                        name: "FK_ParkedVehicleSlot_ParkedVehicle_ParkedVehiclesId",
-                        column: x => x.ParkedVehiclesId,
-                        principalTable: "ParkedVehicle",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ParkedVehicleSlot_Slots_SlotsId",
-                        column: x => x.SlotsId,
-                        principalTable: "Slots",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ParkedVehicle_PersonId",
-                table: "ParkedVehicle",
-                column: "PersonId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ParkedVehicle_VehicleId",
-                table: "ParkedVehicle",
-                column: "VehicleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ParkedVehicleSlot_SlotsId",
-                table: "ParkedVehicleSlot",
-                column: "SlotsId");
-
             migrationBuilder.CreateIndex(
                 name: "IX_Slots_GarageId",
                 table: "Slots",
                 column: "GarageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SlotVehicle_VehiclesId",
+                table: "SlotVehicle",
+                column: "VehiclesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vehicles_PersonId",
@@ -192,10 +156,7 @@ namespace Garage3.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ParkedVehicleSlot");
-
-            migrationBuilder.DropTable(
-                name: "ParkedVehicle");
+                name: "SlotVehicle");
 
             migrationBuilder.DropTable(
                 name: "Slots");
