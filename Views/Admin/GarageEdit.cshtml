@@ -1,4 +1,4 @@
-﻿@model Garage3.Models.Garage
+﻿@model GaragesViewModel
 <partial name="_GaragesMenu" />
 
 <h4>Edit Garage</h4>
@@ -13,16 +13,20 @@
 				<input asp-for="Name" class="form-control" />
 				<span asp-validation-for="Name" class="text-danger"></span>
 			</div>
+			<input type="hidden" asp-for="Size" />
+			<input type="hidden" asp-for="SlotSize" />
+			<!--   Edit Garage size and slot size is not yet supported
 			<div class="form-group">
-				<label asp-for="Size" class="control-label"></label>
-				<input asp-for="Size" class="form-control" />
-				<span asp-validation-for="Size" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="SlotSize" class="control-label"></label>
-				<input asp-for="SlotSize" class="form-control" />
-				<span asp-validation-for="SlotSize" class="text-danger"></span>
-			</div>
+					<label asp-for="Size" class="control-label"></label>
+					<input asp-for="Size" class="form-control" />
+					<span asp-validation-for="Size" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="SlotSize" class="control-label"></label>
+					<input asp-for="SlotSize" class="form-control" />
+					<span asp-validation-for="SlotSize" class="text-danger"></span>
+				</div>
+	-->
 			<div class="form-group">
 				<input type="submit" value="Save" class="btn btn-primary" />
 			</div>
