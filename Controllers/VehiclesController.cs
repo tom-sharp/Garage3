@@ -71,13 +71,94 @@ namespace Garage3.Controllers
 			else
             {
 				ViewBag.Message = "Email exits..";
-				return View();
+				//return View();
+				return RedirectToAction(nameof(SelGarage),new { pid=model1.id});
 			}
 				
         }
 
-        // GET: Vehicles/Create
-        public IActionResult Create()
+		// GET: Vehicles
+		public async Task<IActionResult> SelGarage(int pid)
+		{
+			//var garage3Context = _context.Vehicles.Include(v => v.Person);
+			var model = _context.Garages.Select(p => new SelGarageViewModel
+			{
+				Id = p.Id,
+				Name=p.Name,
+				PersonId= pid
+			});
+			return View(await model.ToListAsync());
+		}
+
+
+		public async Task<IActionResult> CheckIn()
+		{
+			return View();
+		}
+
+            //var model = new  {
+
+            //	Gar= await GetGarageAsync()
+
+            //};
+
+
+
+            //          return View();
+
+
+            //}
+            ////private async Task<IEnumerable<SelectListItem>> GetGarageAsync()
+            //{
+            //	return await _context.Garages
+            //				.Select(g => new SelectListItem
+            //				{
+            //					Text = g.Name,
+            //					Value = g.Id.ToString()
+            //				})
+            //				.ToListAsync();
+            //}
+
+            //private async Task<IEnumerable<SelectListItem>> GetVehicleTypeAsync()
+            //{
+            //	return await _context.VehicleTypes
+            //				.Select(g => new SelectListItem
+            //				{
+            //					Text = g.ToString(),
+            //					Value = g.ToString()
+            //				})
+            //				.ToListAsync();
+            //}
+
+            //[HttpPost]
+            //public IActionResult CheckIn(string email)
+            //{
+            //	var model = _context.Persons.Select(p => new CheckinViewModel
+            //	{
+            //		id = p.Id,
+            //		PersonEmail = p.Email
+            //	});
+
+
+
+            //	var model1 = model.Where(p => p.PersonEmail == email).FirstOrDefault();
+
+            //	if (model1 == null)
+            //	{
+            //		ViewBag.Message = "notexits";
+            //		return View();
+            //	}
+            //	else
+            //	{
+            //		ViewBag.Message = "Email exits..";
+            //		return View();
+            //	}
+
+            //}
+
+
+            // GET: Vehicles/Create
+            public IActionResult Create()
         {
             ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "Id", "Id");
             return View();
