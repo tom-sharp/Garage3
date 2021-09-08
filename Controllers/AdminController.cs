@@ -279,15 +279,24 @@ namespace Garage3.Controllers
 		}
 
 		// POST: VehicleTypes/Delete/5
-		[HttpPost, ActionName("Delete")]
+		[HttpPost, ActionName("VehicleTypeDeleteConfirmed")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteVehicleTypeConfirmed(int id)
+		public async Task<IActionResult> VehicleTypeDeleteConfirmed(int id)
 		{
-			if (id <= 0) return View("VehicleTypesList");
+			if (id <= 0) return RedirectToAction("VehicleTypesList");
 			var v = await _context.VehicleTypes.FindAsync(id);
+			if (v == null) return RedirectToAction("VehicleTypesList");
+
 			_context.VehicleTypes.Remove(v);
-			await _context.SaveChangesAsync();
-			return View("VehicleTypesList");
+			try
+			{
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateException ex)
+			{
+				return View("_Err", new MsgViewModel("Failed Deleting Garage", ex.Message));
+			}
+			return RedirectToAction("VehicleTypesList");
 		}
 
 		private bool VehicleTypeExists(int id)
