@@ -304,7 +304,126 @@ namespace Garage3.Controllers
 			return _context.VehicleTypes.Any(e => e.Id == id);
 		}
 
-	}
+		/*	##############################################
+			##											##
+			##					Person					##
+			##											##
+			############################################## */
 
-	
+
+		// List Persons
+		public async Task<IActionResult> PersonsList()
+		{
+			var model = _context.Persons.OrderBy(v => v.FirstName).Select(v => new PersonsViewModel() { FirstName = v.FirstName, LastName = v.LastName, Email = v.Email, SSN = v.SSN, MemberType = v.MemberType, Id = v.Id });
+			return View(await model.ToListAsync());
+
+		}
+
+		// Create Person
+		public IActionResult PersonCreate() { return View(); }
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> PersonCreate([Bind("FirstName, LastName, Email, SSN, BirthDate, MemberType")] PersonsViewModel v)
+		{
+			if ((ModelState.IsValid) && (v.Validate()))
+			{
+				var newPerson = new Person() { FirstName = v.FirstName, LastName = v.LastName, Email = v.Email, SSN = v.SSN,  MemberType = v.MemberType };
+				_context.Add(newPerson);
+
+				await _context.SaveChangesAsync();
+
+				return RedirectToAction("PersonsList");
+			}
+			return View(v);
+		}
+
+		// GET: Persons/Edit/5
+		public async Task<IActionResult> PersonEdit(int? id)
+		{
+			if ((id == null) || (id <= 0)) return View("PersonsList");
+
+			var v = await _context.Persons.FindAsync(id);
+			if (v == null)
+			{
+				return NotFound();
+			}
+			return View(v);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> PersonEdit(int id, [Bind("Id,FirstName,LastName,Email,SSN,BirthDate,MemberType")] Person v)
+		{
+			if (id != v.Id)
+			{
+				return NotFound();
+			}
+
+			if (ModelState.IsValid)
+			{
+				try
+				{
+					_context.Update(v);
+					await _context.SaveChangesAsync();
+				}
+				catch (DbUpdateConcurrencyException)
+				{
+					if (!PersonExists(v.Id))
+					{
+						return NotFound();
+					}
+					else
+					{
+						throw;
+					}
+				}
+				return RedirectToAction("PersonsList");
+			}
+			return View(v);
+		}
+
+		// GET: Persons/Delete/5
+		public async Task<IActionResult> PersonDelete(int? id)
+		{
+			if ((id == null) || (id <= 0)) return View("PersonsList");
+
+			var v = await _context.Persons
+				.FirstOrDefaultAsync(m => m.Id == id);
+			if (v == null)
+			{
+				return NotFound();
+			}
+
+			return View(v);
+		}
+
+		// POST: Persons/Delete/5
+		[HttpPost, ActionName("PersonDeleteConfirmed")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> PersonDeleteConfirmed(int id)
+		{
+			if (id <= 0) return RedirectToAction("PersonsList");
+			var v = await _context.Persons.FindAsync(id);
+			if (v == null) return RedirectToAction("PersonsList");
+
+			_context.Persons.Remove(v);
+			try
+			{
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateException ex)
+			{
+				return View("_Err", new MsgViewModel("Failed Deleting Garage", ex.Message));
+			}
+			return RedirectToAction("PersonsList");
+		}
+
+		private bool PersonExists(int id)
+		{
+			return _context.Persons.Any(e => e.Id == id);
+		}
+
+
+	}
 }
