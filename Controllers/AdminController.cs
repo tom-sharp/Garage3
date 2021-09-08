@@ -163,7 +163,7 @@ namespace Garage3.Controllers
 			var garage = await _context.Garages.FindAsync(id);
 			if (garage == null) return RedirectToAction("GaragesList");
 
-			// delete all slots
+			// delete all slots (Not really needed as slots depend on garage and has cascade delete)
 			var allslots = await _context.Slots.Where(s => s.GarageId == garage.Id).ToListAsync();
 			if (allslots.Count > 0) _context.Slots.RemoveRange(allslots);
 			_context.Garages.Remove(garage);

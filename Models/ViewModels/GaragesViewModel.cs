@@ -25,12 +25,15 @@ namespace Garage3.Models.ViewModels
 		}
 		public int Id { get; set; }
 
+		[Display(Name = "Size (Number of parking slots)")]
 		[Range(0,10000)]
 		public int Size { get; set; }
 
+		[Display(Name = "SlotSize (Size of a parking slot)")]
 		[Range(1,10)]
 		public int SlotSize { get; set; }
 
+		[Display(Name = "Garage name")]
 		[MinLength(4),MaxLength(50)]
 		public string Name { get; set; }
 	}
