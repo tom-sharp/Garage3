@@ -181,12 +181,110 @@ namespace Garage3.Controllers
 			return _context.Garages.Any(e => e.Id == id);
 		}
 
+
+
+		/*	##############################################
+			##											##
+			##				VehicleType					##
+			##											##
+			############################################## */
+
+
 		// List VehicleTypes
 		public async Task<IActionResult> VehicleTypesList()
 		{
-			var model = _context.VehicleTypes.OrderBy(v => v.Name).Select(v => new VehicleTypesViewModel());
+			var model = _context.VehicleTypes.OrderBy(v => v.Name).Select(v => new VehicleTypesViewModel() { Size = v.Size, Name = v.Name, Id = v.Id });
 			return View(await model.ToListAsync());
 
+		}
+
+		// Create VehicleType
+		public IActionResult VehicleTypeCreate() { return View(); }
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> VehicleTypeCreate([Bind("Size, Name")] VehicleTypesViewModel v)
+		{
+			if ((ModelState.IsValid) && (v.Validate()))
+			{
+				var newVehicleType = new VehicleType() { Name = v.Name, Size = v.Size};
+				_context.Add(newVehicleType);
+
+				await _context.SaveChangesAsync();
+
+				return RedirectToAction(nameof(Index));
+			}
+			return View(v);
+		}
+
+		public async Task<IActionResult> VehicleTypeEdit(int? id)
+		{
+			if ((id == null) || (id <= 0)) return View("VehicleTypesList");
+
+			var garage = await _context.VehicleTypes.FindAsync(id);
+			if (garage == null)
+			{
+				return NotFound();
+			}
+			return View(garage);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> VehicleTypeEdit(int id, [Bind("Id,Size,Name")] VehicleType v)
+		{
+			if (id != v.Id)
+			{
+				return NotFound();
+			}
+
+			if (ModelState.IsValid)
+			{
+				try
+				{
+					_context.Update(v);
+					await _context.SaveChangesAsync();
+				}
+				catch (DbUpdateConcurrencyException)
+				{
+					if (!GarageExists(v.Id))
+					{
+						return NotFound();
+					}
+					else
+					{
+						throw;
+					}
+				}
+				return RedirectToAction(nameof(VehicleTypesList));
+			}
+			return View(v);
+		}
+
+		public async Task<IActionResult> VehicleTypeDelete(int? id)
+		{
+			if ((id == null) || (id <= 0)) return View("VehicleTypesList");
+
+			var v = await _context.VehicleTypes
+				.FirstOrDefaultAsync(m => m.Id == id);
+			if (v == null)
+			{
+				return NotFound();
+			}
+
+			return View(v);
+		}
+
+		// POST:VehicleTypees/Delete/5
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteVehicleTypeConfirmed(int id)
+		{
+			if (id <= 0) return View("VehicleTypesList");
+			var v = await _context.VehicleTypes.FindAsync(id);
+			_context.VehicleTypes.Remove(v);
+			await _context.SaveChangesAsync();
+			return View("VehicleTypesList");
 		}
 
 
