@@ -214,7 +214,20 @@ namespace Garage3.Controllers
 			return View("_Msg", new MsgViewModel("failed check-out (test)"));
 		}
 
-
+		private async Task<int> FreeSlots(int garageid) {
+			if (garageid <= 0) return 0;
+			var garage = await _context.Garages.FindAsync(garageid);
+			if (garage == null) return 0;
+			var garageslots = await _context.Slots.Where(s => s.GarageId == garage.Id).ToListAsync();
+			int slotsize = garage.SlotSize;
+			int counter = 0;
+			foreach (var slot in garageslots)
+			{
+				if (slot.InUse == 0) counter++;
+				else if ((slot.InUse < 0) || (slot.InUse > slotsize)) throw new ApplicationException($"DEBUG::FreeSlots - InUse Integrigy test failed - (SlotId: {slot.Id} InUse={slot.InUse})");
+			}
+			return counter;
+		}
 
 		private async Task<bool> ParkVehicle(int garageid, int vehicleid)
 		{
@@ -227,9 +240,6 @@ namespace Garage3.Controllers
 			// get slots for garage
 			int slotsize = garage.SlotSize;
 			var garageslots = await _context.Slots.Include(s=> s.Vehicles).Where(s => s.GarageId == garage.Id).OrderBy(s=> s.No).ToListAsync();
-			foreach (var slot in garageslots) {
-				if ((slot.InUse < 0) || (slot.InUse > slotsize)) throw new ApplicationException($"DEBUG::ParkVehicle - InUse Integrigy test failed - (SlitId: {slot.Id} InUse={slot.InUse})");
-			}
 			int slotcount = garageslots.Count();
 			int slotsizeRequired = vehicle.VehicleType.Size;    // size of vechicle
 			int slotsizeAccumulated = 0;
