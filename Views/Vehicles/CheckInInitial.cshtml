@@ -1,0 +1,47 @@
+﻿@model Garage3.Models.ViewModels.CheckinInitViewModel
+
+@{
+    ViewData["Title"] = "CheckInInitial";
+}
+
+
+
+<hr />
+<div class="row jumbotron">
+    <div class="col-md-8">
+        <form asp-action="CheckInInitial">
+
+
+            <h1>Members Only</h1>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+
+                <input asp-for="PersonEmail" name="email" class="form-control" placeholder="Email.." />
+                <span asp-validation-for="PersonEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="CheckIn" class="btn btn-primary" />
+            </div>
+
+            @if (ViewBag.Message != null)
+            {
+                <br /><span style="color:red;">@ViewBag.Message</span>
+            }
+        </form>
+    </div>
+    <div class="col-md-4 text-center border-left border-dark">
+        <h4>For Non Members</h4>
+        <h2>Sign Up First</h2>
+        <p>**sign up is free**</p>
+        <a asp-action=" ">Sign Up Here</a>
+
+    </div>
+
+
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

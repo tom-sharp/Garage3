@@ -1,33 +1,29 @@
-﻿@model Garage3.Models.Garage
+﻿@model IEnumerable<Slot>
 <partial name="_GaragesMenu" />
 
-<h1>Details</h1>
+<table class="table">
+	<thead>
+		<tr>
+			<th>@Html.DisplayNameFor(model => model.GarageId)</th>
+			<th>@Html.DisplayNameFor(model => model.No)</th>
+			<th>@Html.DisplayNameFor(model => model.InUse)</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var g in Model)
+		{
+			<tr>
+				<td>@g.GarageId</td>
+				<td>@g.No</td>
+				<td>@g.InUse</td>
+				<td>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
 
 <div>
-	<h4>Garage Slots</h4>
-	<hr />
-	<dl class="row">
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Size)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Size)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.SlotSize)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.SlotSize)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Name)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Name)
-		</dd>
-	</dl>
-</div>
-<div>
-	<a asp-action="GarageEdit" asp-route-id="@Model.Id">Edit</a> |
-	<a asp-action="GarageList">Back to List</a>
+	<a asp-action="GaragesList">Back to List</a>
 </div>

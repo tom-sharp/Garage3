@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garage3.Data;
 using Garage3.Models;
+using Garage3.Models.ViewModels;
 
 namespace Garage3.Controllers
 {
@@ -45,9 +46,34 @@ namespace Garage3.Controllers
 			return View(vehicle);
 		}
 
-        public IActionResult CheckIn()
+        public IActionResult CheckInInitial()
         {
             return View();
+        }
+		[HttpPost]
+		public IActionResult CheckInInitial(string email)
+        {
+			var model = _context.Persons.Select(p => new CheckinInitViewModel
+			{
+				id=p.Id,
+				PersonEmail=p.Email
+			});
+
+
+
+			var model1 = model.Where(p => p.PersonEmail == email).FirstOrDefault();
+
+			if (model1 == null)
+			{
+				ViewBag.Message = "notexits";
+				return View();
+			}
+			else
+            {
+				ViewBag.Message = "Email exits..";
+				return View();
+			}
+				
         }
 
         // GET: Vehicles/Create
@@ -162,14 +188,19 @@ namespace Garage3.Controllers
 			return _context.Vehicles.Any(e => e.Id == id);
 		}
 
-		// Verify success parking by checking the State property to be parked
 
-		private async Task<bool> ParkVehicle(int id)
+
+		private async Task<bool> ParkVehicle(int garageid, int vehicleid)
 		{
-			if (id <= 0) return false;
-			var pv = await _context.Vehicles.FirstOrDefaultAsync(v=>v.Id == id);
-			if (pv == null) return false;
-//			if (pv.State != (int)VehicleState.UnParked) return false;
+			if ((garageid <= 0) || (vehicleid <= 0)) return false;
+			var vehicle = await _context.Vehicles.FindAsync(vehicleid);
+			if (vehicle == null) return false;
+			var garage = await _context.Garages.FindAsync(garageid);
+			if (garage == null) return false;
+
+			// succesful get garage & vehicle
+			//			if (pv == null) return false;
+			//			if (pv.State != (int)VehicleState.UnParked) return false;
 
 			// ADD LOGIC TO GET PARKING SLOTS
 
@@ -177,22 +208,26 @@ namespace Garage3.Controllers
 			//slot.add(vehicle)
 
 			//VehicleSlot
-			
 
-//			pv.State = (int)VehicleState.Parked;
-			_context.Vehicles.Update(pv);
+
+			//			pv.State = (int)VehicleState.Parked;
+			//			_context.Vehicles.Update(pv);
 
 			return true;
 		}
 
-		// Verify success unparking by checking the State property to be unparked
-		private async Task UnParkVehicle(Vehicle vehicle)
+		private async Task<bool> UnParkVehicle(int vehicleid)
 		{
-//			if (vehicle.State != (int)VehicleState.Parked) return;
+			if (vehicleid <= 0) return false;
+			var vehicle = await _context.Vehicles.FindAsync(vehicleid);
+			if (vehicle == null) return false;
+
+			//			if (vehicle.State != (int)VehicleState.Parked) return;
 
 			// ADD LOGIC TO FREE PARKING SLOTS
 
-//			vehicle.State = (int)VehicleState.UnParked;
+			//			vehicle.State = (int)VehicleState.UnParked;
+			return true;
 		}
 	}
 }

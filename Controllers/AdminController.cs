@@ -62,25 +62,37 @@ namespace Garage3.Controllers
 			if ((ModelState.IsValid) && (g.Validate()))
 			{
 				var newgarage = new Garage() {Name = g.Name, Size = g.Size, SlotSize = g.SlotSize };
-				_context.Add(newgarage);
+				_context.Garages.Add(newgarage);
+				try
+				{
+					await _context.SaveChangesAsync();
+				}
+				catch (DbUpdateException ex)
+				{
+					return View("_Msg", new MsgViewModel("Failed to create garage", ex.Message));
+				}
 
-				// ADD SOME CODE HERE TO HANDLE FAILURE
-				await _context.SaveChangesAsync();
+				if (newgarage.Id > 0)
+				{
+					int counter = 0;
+					newgarage.Slots = new List<Slot>();
+					while (counter++ < newgarage.Size)
+					{
+						newgarage.Slots.Add(new Slot() { GarageId = newgarage.Id, InUse = 0, No = counter });
+					}
+				}
+				else {
+					return View("_Msg", new MsgViewModel("Failed to create garage", "Add to garage table Failed "));
+				}
 
-				// HERE CREATE SLOTS
-				//if (newgarage.Id > 0) {
-				//	int counter = 0, totalslots = newgarage.Size * newgarage.SlotSize;
-				//	newgarage.Slots = new List<Slot>();
-				//	while (counter++ < newgarage.Size) {
-				//		newgarage.Slots.Add(new Slot() { GarageId = newgarage.Id, State = 0, VehicleId = 0 });
-				//	}
-				//	// ADD SOME CODE HERE TO HANDLE FAILURE
-				//	await _context.SaveChangesAsync();
-				//	// ADD SOME CODE HERE TO SHOW SUCCESS
-				//	var slot = new Slot();
-				//	slot.
-				//}
-				return RedirectToAction(nameof(Index));
+				try
+				{
+					await _context.SaveChangesAsync();
+				}
+				catch (DbUpdateException ex) { 
+					return View("_Msg", new MsgViewModel("Failed to create garage", ex.Message));
+				}
+				return RedirectToAction("GaragesList");
 			}
 			return View(g);
 		}
@@ -88,92 +100,81 @@ namespace Garage3.Controllers
 		// GET: Garages/Edit/5
 		public async Task<IActionResult> GarageEdit(int? id)
 		{
-			if ((id == null) || (id <= 0)) return View("GarageList");
-
+			if ((id == null) || (id <= 0)) RedirectToAction("GaragesList");
 			var garage = await _context.Garages.FindAsync(id);
-			if (garage == null)
-			{
-				return NotFound();
-			}
-			return View(garage);
+			if (garage == null) RedirectToAction("GaragesList");
+			return View(new GaragesViewModel(garage));
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> GarageEdit(int id, [Bind("Id,Size,SlotSize,Name")] Garage garage)
+		public async Task<IActionResult> GarageEdit(int id, [Bind("Id,Size,SlotSize,Name")] GaragesViewModel g)
 		{
-			if (id != garage.Id)
-			{
-				return NotFound();
-			}
+			if (id != g.Id) RedirectToAction("GaragesList");
+			var garage = await _context.Garages.FindAsync(id);
+			if (garage == null) RedirectToAction("GaragesList");
 
-			if (ModelState.IsValid)
+			if ((ModelState.IsValid) && (g.Validate()))
 			{
+				// Will Only Update Name
+				// Updating Garage and Slot size is not yet supported
+				garage.Name = g.Name;
 				try
 				{
 					_context.Update(garage);
 					await _context.SaveChangesAsync();
 				}
-				catch (DbUpdateConcurrencyException)
+				catch (DbUpdateException ex)
 				{
-					if (!GarageExists(garage.Id))
-					{
-						return NotFound();
-					}
-					else
-					{
-						throw;
-					}
+					return View("_Msg", new MsgViewModel("Failed to Update Database", ex.Message));
 				}
-				return RedirectToAction(nameof(GaragesList));
+				return RedirectToAction("GaragesList");
 			}
-			return View(garage);
+			return View(new GaragesViewModel(garage));
 		}
 
 		// GET: Garages/Details/5
-		public async Task<IActionResult> Details(int? id)
+		public async Task<IActionResult> GarageSlots(int? id)
 		{
-			if (id == null)
-			{
-				return NotFound();
-			}
-
-			var garage = await _context.Garages
-				.FirstOrDefaultAsync(m => m.Id == id);
-			if (garage == null)
-			{
-				return NotFound();
-			}
-
-			return View(garage);
+			if (id == null) return RedirectToAction("GaragesList");
+			
+			var garage = await _context.Garages.FirstOrDefaultAsync(m => m.Id == id);
+			if (garage == null) return RedirectToAction("GaragesList");
+			garage.Slots = await _context.Slots.Where(s => s.GarageId == garage.Id).ToListAsync();
+			return View(garage.Slots);
 		}
 
 
 		// GET: Garages/Delete/5
 		public async Task<IActionResult> GarageDelete(int? id)
 		{
-			if ((id == null) || (id <= 0)) return View("GarageList");
-
-			var garage = await _context.Garages
-				.FirstOrDefaultAsync(m => m.Id == id);
-			if (garage == null)
-			{
-				return NotFound();
-			}
-
+			if ((id == null) || (id <= 0)) return RedirectToAction("GaragesList");
+			var garage = await _context.Garages.FirstOrDefaultAsync(m => m.Id == id);
+			if (garage == null) return RedirectToAction("GaragesList");
 			return View(garage);
 		}
 
 		// POST: Garages/Delete/5
-		[HttpPost, ActionName("Delete")]
+		[HttpPost, ActionName("GarageDeleteConfirmed")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(int id)
+		public async Task<IActionResult> GarageDeleteConfirmed(int id)
 		{
-			if (id <= 0) return View("GarageList");
+			if (id <= 0) return RedirectToAction("GaragesList");
 			var garage = await _context.Garages.FindAsync(id);
+			if (garage == null) return RedirectToAction("GaragesList");
+
+			// delete all slots
+			var allslots = await _context.Slots.Where(s => s.GarageId == garage.Id).ToListAsync();
+			if (allslots.Count > 0) _context.Slots.RemoveRange(allslots);
 			_context.Garages.Remove(garage);
-			await _context.SaveChangesAsync();
-			return View("GarageList");
+			try
+			{
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateException ex) {
+				return View("_Err", new MsgViewModel("Failed Deleting Garage", ex.Message));
+			}
+			return RedirectToAction("GaragesList");
 		}
 
 		private bool GarageExists(int id)
