@@ -173,6 +173,10 @@ namespace Garage3.Controllers
 			if (garage == null) return false;
 
 			// succesful get garage & vehicle
+			// get slots for garage
+
+
+
 			//			if (pv == null) return false;
 			//			if (pv.State != (int)VehicleState.UnParked) return false;
 
