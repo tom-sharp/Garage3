@@ -13,7 +13,7 @@ namespace Garage3.Models
 		[MinLength(2), MaxLength(50)]
 		public string Name { get; set; }    // Boat, car..
 
-		[Range(0, 10)]
+		[Range(1, 6)]
 		public int Size { get; set; }		// size in slots
 		public ICollection<Vehicle> Vehicle{ get; set; }
 
