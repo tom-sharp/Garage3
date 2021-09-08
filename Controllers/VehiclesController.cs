@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garage3.Data;
 using Garage3.Models;
+using Garage3.Models.ViewModels;
 
 namespace Garage3.Controllers
 {
@@ -45,9 +46,34 @@ namespace Garage3.Controllers
 			return View(vehicle);
 		}
 
-        public IActionResult CheckIn()
+        public IActionResult CheckInInitial()
         {
             return View();
+        }
+		[HttpPost]
+		public IActionResult CheckInInitial(string email)
+        {
+			var model = _context.Persons.Select(p => new CheckinInitViewModel
+			{
+				id=p.Id,
+				PersonEmail=p.Email
+			});
+
+
+
+			var model1 = model.Where(p => p.PersonEmail == email).FirstOrDefault();
+
+			if (model1 == null)
+			{
+				ViewBag.Message = "notexits";
+				return View();
+			}
+			else
+            {
+				ViewBag.Message = "Email exits..";
+				return View();
+			}
+				
         }
 
         // GET: Vehicles/Create
