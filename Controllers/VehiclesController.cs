@@ -19,12 +19,12 @@ namespace Garage3.Controllers
 			_context = context;
 		}
 
-		// GET: Vehicles
-		public async Task<IActionResult> Index()
-		{
-			var garage3Context = _context.Vehicles.Include(v => v.Person);
-			return View(await garage3Context.ToListAsync());
-		}
+        // GET: Vehicles
+        public async Task<IActionResult> Index()
+        {
+            var garage3Context = _context.Vehicles.Include(v => v.Person);
+            return View(await garage3Context.ToListAsync());
+        }
 
 		// GET: Vehicles/Details/5
 		public async Task<IActionResult> Details(int? id)
@@ -45,12 +45,17 @@ namespace Garage3.Controllers
 			return View(vehicle);
 		}
 
-		// GET: Vehicles/Create
-		public IActionResult Create()
-		{
-			ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "Id", "Id");
-			return View();
-		}
+        public IActionResult CheckIn()
+        {
+            return View();
+        }
+
+        // GET: Vehicles/Create
+        public IActionResult Create()
+        {
+            ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "Id", "Id");
+            return View();
+        }
 
 		// POST: Vehicles/Create
 		// To protect from overposting attacks, enable the specific properties you want to bind to.
