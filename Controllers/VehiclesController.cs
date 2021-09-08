@@ -177,6 +177,19 @@ namespace Garage3.Controllers
 			return View("_Msg", new MsgViewModel("failed check-in (test)"));
 		}
 
+		public async Task<IActionResult> TestUnPark()
+		{
+			var vehicle = await _context.Vehicles.FirstOrDefaultAsync(v => v.State == VehicleState.Parked);
+			if (vehicle == null) return View("_Msg", new MsgViewModel("Could not find any Vehicle to check out"));
+
+			if (await UnParkVehicle(vehicle.Id))
+			{
+				return View("_Msg", new MsgViewModel("Success check-out (test)"));
+			}
+			return View("_Msg", new MsgViewModel("failed check-out (test)"));
+		}
+
+
 
 		private async Task<bool> ParkVehicle(int garageid, int vehicleid)
 		{
@@ -226,6 +239,7 @@ namespace Garage3.Controllers
 			if (slotsizeRequired <= slotsizeAccumulated) {
 				// Managed to get enough slots to park
 				vehicle.CheckInTime = DateTime.Now;
+				vehicle.State = VehicleState.Parked;
 				foreach (var slot in SlotsAccumulated) {
 					slot.Vehicles.Add(vehicle);
 					if (slotsizeRequired <= slotsize)
@@ -255,14 +269,38 @@ namespace Garage3.Controllers
 		private async Task<bool> UnParkVehicle(int vehicleid)
 		{
 			if (vehicleid <= 0) return false;
-			var vehicle = _context.Vehicles.Include(v => v.Slots).FirstOrDefault(v => v.Id == vehicleid);
+			var vehicle = _context.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).ThenInclude(s=> s.Garage).FirstOrDefault(v => v.Id == vehicleid);
 			if ((vehicle == null) || (vehicle.State != VehicleState.Parked)) return false;
+			vehicle.Slots = vehicle.Slots.OrderBy(s=> s.No).ToList();
+			int parksize = vehicle.VehicleType.Size;
+			foreach (var slot in vehicle.Slots) {
+				if (parksize < slot.Garage.SlotSize)
+				{
+					// vehicle occupy smaller size than a full slot
+					slot.InUse -= parksize;
+					slot.Vehicles.Remove(vehicle);
+					parksize = 0;
+				}
+				else {
+					// vehicle occupy a full slot
+					slot.InUse = 0;
+					slot.Vehicles.Remove(vehicle);
+					parksize -= slot.Garage.SlotSize;
+				}
+			}
 
+			vehicle.CheckOutTime = DateTime.Now;
+			vehicle.State = VehicleState.UnParked;
 
-			// ADD LOGIC TO FREE PARKING SLOTS
-
-			vehicle.State = (int)VehicleState.UnParked;
-
+			_context.Update(vehicle);
+			try
+			{
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateException)
+			{
+				return false;
+			}
 			return true;
 		}
 	}
