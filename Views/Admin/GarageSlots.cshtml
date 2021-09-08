@@ -1,12 +1,12 @@
-﻿@model IEnumerable<Slot>
+﻿@model IEnumerable<SlotViewModel>
 <partial name="_GaragesMenu" />
 
 <table class="table">
 	<thead>
 		<tr>
-			<th>@Html.DisplayNameFor(model => model.GarageId)</th>
-			<th>@Html.DisplayNameFor(model => model.No)</th>
+			<th>@Html.DisplayNameFor(model => model.ParkingSlot)</th>
 			<th>@Html.DisplayNameFor(model => model.InUse)</th>
+			<th>@Html.DisplayNameFor(model => model.ParkedVehicles)</th>
 			<th></th>
 		</tr>
 	</thead>
@@ -14,9 +14,9 @@
 		@foreach (var g in Model)
 		{
 			<tr>
-				<td>@g.GarageId</td>
-				<td>@g.No</td>
+				<td>@g.ParkingSlot</td>
 				<td>@g.InUse</td>
+				<td>@g.ParkedVehicles</td>
 				<td>
 				</td>
 			</tr>

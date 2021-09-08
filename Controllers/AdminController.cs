@@ -137,11 +137,10 @@ namespace Garage3.Controllers
 		public async Task<IActionResult> GarageSlots(int? id)
 		{
 			if (id == null) return RedirectToAction("GaragesList");
-			
 			var garage = await _context.Garages.FirstOrDefaultAsync(m => m.Id == id);
 			if (garage == null) return RedirectToAction("GaragesList");
-			garage.Slots = await _context.Slots.Where(s => s.GarageId == garage.Id).ToListAsync();
-			return View(garage.Slots);
+			var model = await _context.Slots.Include(s=> s.Vehicles).Where(s => s.GarageId == garage.Id).OrderBy(s=> s.No).Select(s=> new SlotViewModel(s)).ToListAsync();
+			return View(model);
 		}
 
 

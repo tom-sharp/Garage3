@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,21 +11,23 @@ namespace Garage3.Models.ViewModels
 		public SlotViewModel(){	}
 		public SlotViewModel(Slot slot)
 		{
-			this.GarageId = slot.GarageId;
-			throw new ApplicationException("Automapper in ctor is not yet ready");
+			if (slot != null) {
+				this.ParkingSlot = $"{slot.GarageId}:{slot.No}";
+				this.InUse = slot.InUse;
+				this.ParkedVehicles = "";
+				if (slot.Vehicles != null) {
+					foreach (var v in slot.Vehicles) {
+						this.ParkedVehicles += $"{v.LicensePlate}, ";
+					}
+				}
+			}
 		}
-
-		public int Id { get; set; }             // this is only used with DB reference and not guaranteed på be continous
-
-		public int GarageId { get; set; }
-		public int No { get; set; }         // Slot numbering for the garage (parking space number)
-
-		string Name { get; set; }			// parking slot name ()
-		public int InUse { get; set; }          // -1 = Reserved, 0= Free, 1..n = InUse(0..slotsize), 
-
-		public ICollection<Vehicle> Vehicles { get; set; }
-
-		public Garage Garage { get; set; }
+		[Display (Name = "Garage:Slot")]
+		public string ParkingSlot { get; set; }     // Garage+SlotNumber
+		[Display(Name = "In Use")]
+		public int InUse { get; set; }          // -1 = Reserved, 0= Free, 1..n = InUse(0..slotsize),
+		[Display(Name = "Parked Vehicles")]
+		public string ParkedVehicles { get; set; }	// list with regno
 
 	}
 }
