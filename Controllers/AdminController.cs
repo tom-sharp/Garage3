@@ -424,6 +424,88 @@ namespace Garage3.Controllers
 			return _context.Persons.Any(e => e.Id == id);
 		}
 
+		/*	##############################################
+			##											##
+			##				  Statistics				##
+			##											##
+			############################################## */
+
+		/*
+		public async Task<IActionResult> Statistics()
+		{
+			var stats = new StatisticsViewModel();
+
+			//var parked = await _context.ParkedVehicle.Where(v => v.State == VehicleState.Parked).ToListAsync();
+			
+			TimeSpan accumulatedtime = TimeSpan.Zero;
+			DateTime nowtime = DateTime.Now;
+
+			stats.NoOfCars = 0;
+			stats.NoOfMotorCycles = 0;
+			stats.NoOfTrucks = 0;
+			stats.NoOfBuses = 0;
+			stats.NoOfBoats = 0;
+
+			stats.NoOfBlack = 0;
+			stats.NoOfBlue = 0;
+			stats.NoOfGreen = 0;
+			stats.NoOfRed = 0;
+			stats.NoOfSilver = 0;
+			stats.NoOfUnknown = 0;
+			stats.NoOfWhite = 0;
+			stats.NoOfYellow = 0;
+
+			stats.NoTotalVehicles = 0;
+			stats.NoOfWheels = 0;
+			stats.GarageTurnOver = 0;
+
+			
+			foreach (var v in parked)
+			{
+				switch (v.Color)
+				{
+					case VehicleColor.Black: stats.NoOfBlack++; break;
+					case VehicleColor.Blue: stats.NoOfBlue++; break;
+					case VehicleColor.Green: stats.NoOfGreen++; break;
+					case VehicleColor.Red: stats.NoOfRed++; break;
+					case VehicleColor.Silver: stats.NoOfSilver++; break;
+					case VehicleColor.Unknown: stats.NoOfUnknown++; break;
+					case VehicleColor.White: stats.NoOfWhite++; break;
+					case VehicleColor.Yellow: stats.NoOfYellow++; break;
+				}
+			
+
+				switch (v.VehicleType)
+				{
+
+					
+					stats.
+					case VehicleType.Car: stats.NoOfCars++; break;
+					case VehicleType.Motorcycle: stats.NoOfMotorCycles++; break;
+					case VehicleType.Truck: stats.NoOfTrucks++; break;
+					case VehicleType.Bus: stats.NoOfBuses++; break;
+					case VehicleType.Boat: stats.NoOfBoats++; break;
+					
+				}
+
+				stats.NoTotalVehicles++;
+				stats.NoOfWheels += v.Wheels;
+				accumulatedtime += nowtime - v.ArrivalTime;
+			}
+		
+			stats.GarageTurnOver = (int)(accumulatedtime.TotalMinutes * Globals.ParkingPrice);
+
+			if (stats.NoTotalVehicles > 0) accumulatedtime /= stats.NoTotalVehicles;
+			else accumulatedtime = TimeSpan.Zero;
+
+			stats.AvgParkingTime = (int)accumulatedtime.TotalHours;
+
+			return View("Statistics", stats);
+
+		
+		}
+
+*/
 
 	}
 }

@@ -10,6 +10,10 @@ namespace Garage3.Models
 		White,
 		Red,
 		Green,
-		Blue
+		Blue,
+		Black,
+		Silver,
+		Yellow,
+		Unknown
 	}
 }
