@@ -172,7 +172,7 @@ namespace Garage3.Controllers
 				await _context.SaveChangesAsync();
 			}
 			catch (DbUpdateException ex) {
-				return View("_Err", new MsgViewModel("Failed Deleting Garage", ex.Message));
+				return View("_Msg", new MsgViewModel("Failed Deleting Garage", ex.Message));
 			}
 			return RedirectToAction("GaragesList");
 		}
@@ -294,7 +294,7 @@ namespace Garage3.Controllers
 			}
 			catch (DbUpdateException ex)
 			{
-				return View("_Err", new MsgViewModel("Failed Deleting Garage", ex.Message));
+				return View("_Msg", new MsgViewModel("Failed Deleting Garage", ex.Message));
 			}
 			return RedirectToAction("VehicleTypesList");
 		}
@@ -414,7 +414,7 @@ namespace Garage3.Controllers
 			}
 			catch (DbUpdateException ex)
 			{
-				return View("_Err", new MsgViewModel("Failed Deleting Garage", ex.Message));
+				return View("_Msg", new MsgViewModel("Failed Deleting Garage", ex.Message));
 			}
 			return RedirectToAction("PersonsList");
 		}
