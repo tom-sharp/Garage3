@@ -213,21 +213,22 @@ namespace Garage3.Controllers
 
 				await _context.SaveChangesAsync();
 
-				return RedirectToAction(nameof(Index));
+				return RedirectToAction("VehicleTypesList");
 			}
 			return View(v);
 		}
 
+		// GET: VehicleTypes/Edit/5
 		public async Task<IActionResult> VehicleTypeEdit(int? id)
 		{
 			if ((id == null) || (id <= 0)) return View("VehicleTypesList");
 
-			var garage = await _context.VehicleTypes.FindAsync(id);
-			if (garage == null)
+			var v = await _context.VehicleTypes.FindAsync(id);
+			if (v == null)
 			{
 				return NotFound();
 			}
-			return View(garage);
+			return View(v);
 		}
 
 		[HttpPost]
@@ -248,7 +249,7 @@ namespace Garage3.Controllers
 				}
 				catch (DbUpdateConcurrencyException)
 				{
-					if (!GarageExists(v.Id))
+					if (!VehicleTypeExists(v.Id))
 					{
 						return NotFound();
 					}
@@ -257,11 +258,12 @@ namespace Garage3.Controllers
 						throw;
 					}
 				}
-				return RedirectToAction(nameof(VehicleTypesList));
+				return RedirectToAction("VehicleTypesList");
 			}
 			return View(v);
 		}
 
+		// GET: VehicleTypes/Delete/5
 		public async Task<IActionResult> VehicleTypeDelete(int? id)
 		{
 			if ((id == null) || (id <= 0)) return View("VehicleTypesList");
@@ -276,7 +278,7 @@ namespace Garage3.Controllers
 			return View(v);
 		}
 
-		// POST:VehicleTypees/Delete/5
+		// POST: VehicleTypes/Delete/5
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteVehicleTypeConfirmed(int id)
@@ -288,6 +290,10 @@ namespace Garage3.Controllers
 			return View("VehicleTypesList");
 		}
 
+		private bool VehicleTypeExists(int id)
+		{
+			return _context.VehicleTypes.Any(e => e.Id == id);
+		}
 
 	}
 
