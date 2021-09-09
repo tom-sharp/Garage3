@@ -24,6 +24,8 @@ namespace Garage3.Models.ViewModels
 			if ((this.SlotSize < 1) || (this.SlotSize > 10)) return false;
 			return true;
 		}
+
+		[Display(Name="Id")]
 		public int Id { get; set; }
 
 		[Display(Name = "Number of parking slots (Size)")]

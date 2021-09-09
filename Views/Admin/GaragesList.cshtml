@@ -4,6 +4,7 @@
 <table class="table">
     <thead>
 		<tr>
+			<th>@Html.DisplayNameFor(model => model.Id)</th>
 			<th>@Html.DisplayNameFor(model => model.Name)</th>
 			<th>@Html.DisplayNameFor(model => model.Size)</th>
 			<th>@Html.DisplayNameFor(model => model.SlotSize)</th>
@@ -13,6 +14,7 @@
     <tbody>
 @foreach (var g in Model) {
 		<tr>
+			<td>@g.Id</td>
 			<td>@g.Name</td>
 			<td>@g.Size</td>
 			<td>@g.SlotSize</td>
