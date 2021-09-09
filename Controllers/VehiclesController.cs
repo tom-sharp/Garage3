@@ -276,7 +276,7 @@ namespace Garage3.Controllers
 				vehicle.CheckInTime = DateTime.Now;
 				vehicle.State = VehicleState.Parked;
 				foreach (var slot in SlotsAccumulated) {
-					slot.Vehicles.Add(vehicle);
+					if ((slot.Vehicles != null) && (!slot.Vehicles.Contains(vehicle))) slot.Vehicles.Add(vehicle);		// Expect some DB inconsistence while in development state
 					if (slotsizeRequired <= slotsize)
 					{
 						slot.InUse += slotsizeRequired; // a fraction of the slot is used
