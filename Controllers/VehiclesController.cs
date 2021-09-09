@@ -76,9 +76,10 @@ namespace Garage3.Controllers
 				
         }
 
-		public  IActionResult CheckIn(int? pid)
+		public  IActionResult CheckIn(int pid)
 		{
-            var model = new CheckInViewModel
+			ViewBag.pid = pid;
+			var model = new CheckInViewModel
             {
 				VehicleTypes = GetVehicleTypeAsync().Result,
 				GarageList=GetGarageListAsync().Result
@@ -92,48 +93,76 @@ namespace Garage3.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> CheckIn(CheckInViewModel model)
+		public async Task<IActionResult> CheckIn(CheckInViewModel viewModel)
 		{
-
-			// 1. retirve infoormation about the vehicle 
-			// user input data about vehicle ?   ||  retived from db ?
-
-
+			var veh = _context.Vehicles.Where(v => v.LicensePlate == viewModel.LicensePlate && v.State == VehicleState.Parked);
 			
+			if(veh.Count()>0)
+			{
+				TempData["Message1"] = "Car with License Plate Already Parked";
+				return RedirectToAction(nameof(CheckInInitial));
+			}
 
-			// FreeSlots(garageid) - Returns number of free slots at that garage
+			var vehicle = new Vehicle
+			{	
+				LicensePlate=viewModel.LicensePlate,
+				Make=viewModel.Make,
+				Color=viewModel.Color,
+				Model=viewModel.Model,
+				VehicleTypeId=viewModel.VehicleTypeId,
+				PersonId= viewModel.PersonId,
+				State= VehicleState.TryPark
+			};
 
-			// 2 create a new vehicle and save it to DB as STATE UnParked
-			// 
+			_context.Add(vehicle);
+			await _context.SaveChangesAsync();
 
-			// 3. CAll Park (garageid, vehicleid)
-			// retrives the vehicle from DB, chec for slots
-			// if its' abble to park, update state to PARKED and set checkin time
-			// return TRUE if not slots avaiable DO NOTHING STE will still be UNPARKED return FALSE
+			var vehicle1 = _context.Vehicles.Select(p => new CheckInViewModel
+			{
+				Id = p.Id,
+				LicensePlate=p.LicensePlate			});
 
-			// 4. send message yto user about some success or failure
-
-			// other choice to choose other garage ?
-
-
-			//model.CheckInTime = DateTime.Now;
-			//if(ParkVehicle(model.GarageId,))
+			var model1 = vehicle1.Where(p => p.LicensePlate==viewModel.LicensePlate).
+									OrderBy(m=>m.Id).Last();
+			int garageId = viewModel.GarageId;
+			int vehicleId = model1.Id;
+			bool allowPark = await ParkVehicle(garageId, vehicleId);
 			
-			//var vehicle= new Vehicle
+			if (allowPark) 
+			{
 
-			//if (ModelState.IsValid)
-			//{
-			//	_context.Add(vehicle);
-			//	await _context.SaveChangesAsync();
-			//	return RedirectToAction(nameof(Index));
-			//}
-			//ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "Id", "Id", vehicle.PersonId);
-			//return View(vehicle);
+				TempData["Message1"] = "Is Parked";
+				return RedirectToAction(nameof(CheckInReciept), new { id = vehicleId });
 
-			return RedirectToAction(nameof(Index));
+			}
+            else
+            {
+				TempData["Message1"] = "Cannot Park.. Not Enough Space";
+				return RedirectToAction(nameof(CheckInInitial));
+			}
+
+
+				
+
 		}
 
+		
+		public async Task<IActionResult> CheckInReciept(int id)
+		{
+			var receiptData = _context.Vehicles.Select(p => new CheckInConfirmReceiptViewModel
+            {
+				Id=p.Id,
+                LicensePlate = p.LicensePlate,
+                CheckInTime = p.CheckInTime,
+                Color = p.Color,
+                Make = p.Make,
+				VechileTypeName=p.VehicleType.Name
 
+            });
+
+			var model1 = receiptData.Where(p => p.Id == id).FirstOrDefault();
+            return View(model1);
+		}
 		//TODO: place this in its own Service-class
 		private async Task<IEnumerable<SelectListItem>> GetVehicleTypeAsync()
 		{
