@@ -1,0 +1,29 @@
+﻿@model IEnumerable<ParkedVehicleViewModel>
+<partial name="_OverViewsMenu" />
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>@Html.DisplayNameFor(model => model.VehicleType)</th>
+			<th>@Html.DisplayNameFor(model => model.LicensePlate)</th>
+			<th>@Html.DisplayNameFor(model => model.ParkedAt)</th>
+			<th>@Html.DisplayNameFor(model => model.ParkedTime)</th>
+			<th>@Html.DisplayNameFor(model => model.Owner)</th>
+			<th>@Html.DisplayNameFor(model => model.MembershipLevel)</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var v in Model)
+		{
+		<tr>
+			<td>@v.VehicleType</td>
+			<td>@v.LicensePlate</td>
+			<td>@v.ParkedAt</td>
+			<td>@v.ParkedTime</td>
+			<td>@v.Owner</td>
+			<td>@v.MembershipLevel</td>
+		</tr>
+		}
+	</tbody>
+</table>

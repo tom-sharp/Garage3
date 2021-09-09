@@ -71,13 +71,95 @@ namespace Garage3.Controllers
 			else
             {
 				ViewBag.Message = "Email exits..";
-				return View();
+				return RedirectToAction(nameof(CheckIn),new { pid=model1.id});
 			}
 				
         }
 
-        // GET: Vehicles/Create
-        public IActionResult Create()
+		public  IActionResult CheckIn(int? pid)
+		{
+            var model = new CheckInViewModel
+            {
+				VehicleTypes = GetVehicleTypeAsync().Result,
+				GarageList=GetGarageListAsync().Result
+            };
+          
+            return View(model);
+			
+		}
+
+
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> CheckIn(CheckInViewModel model)
+		{
+
+			// 1. retirve infoormation about the vehicle 
+			// user input data about vehicle ?   ||  retived from db ?
+
+
+			
+
+			// FreeSlots(garageid) - Returns number of free slots at that garage
+
+			// 2 create a new vehicle and save it to DB as STATE UnParked
+			// 
+
+			// 3. CAll Park (garageid, vehicleid)
+			// retrives the vehicle from DB, chec for slots
+			// if its' abble to park, update state to PARKED and set checkin time
+			// return TRUE if not slots avaiable DO NOTHING STE will still be UNPARKED return FALSE
+
+			// 4. send message yto user about some success or failure
+
+			// other choice to choose other garage ?
+
+
+			//model.CheckInTime = DateTime.Now;
+			//if(ParkVehicle(model.GarageId,))
+			
+			//var vehicle= new Vehicle
+
+			//if (ModelState.IsValid)
+			//{
+			//	_context.Add(vehicle);
+			//	await _context.SaveChangesAsync();
+			//	return RedirectToAction(nameof(Index));
+			//}
+			//ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "Id", "Id", vehicle.PersonId);
+			//return View(vehicle);
+
+			return RedirectToAction(nameof(Index));
+		}
+
+
+		//TODO: place this in its own Service-class
+		private async Task<IEnumerable<SelectListItem>> GetVehicleTypeAsync()
+		{
+			return await _context.VehicleTypes
+						.Select(g => new SelectListItem
+						{
+							Text = g.Name.ToString(),
+                            Value = g.Id.ToString()
+						})
+						.ToListAsync();
+		}
+
+		private async Task<IEnumerable<SelectListItem>> GetGarageListAsync()
+		{
+			return await _context.Garages
+						.Select(g => new SelectListItem
+						{
+							Text = g.Name.ToString(),
+							Value = g.Id.ToString()
+						})
+						.ToListAsync();
+		}
+
+
+		// GET: Vehicles/Create
+		public IActionResult Create()
         {
             ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "Id", "Id");
             return View();
@@ -214,7 +296,20 @@ namespace Garage3.Controllers
 			return View("_Msg", new MsgViewModel("failed check-out (test)"));
 		}
 
-
+		private async Task<int> FreeSlots(int garageid) {
+			if (garageid <= 0) return 0;
+			var garage = await _context.Garages.FindAsync(garageid);
+			if (garage == null) return 0;
+			var garageslots = await _context.Slots.Where(s => s.GarageId == garage.Id).ToListAsync();
+			int slotsize = garage.SlotSize;
+			int counter = 0;
+			foreach (var slot in garageslots)
+			{
+				if (slot.InUse == 0) counter++;
+				else if ((slot.InUse < 0) || (slot.InUse > slotsize)) throw new ApplicationException($"DEBUG::FreeSlots - InUse Integrigy test failed - (SlotId: {slot.Id} InUse={slot.InUse})");
+			}
+			return counter;
+		}
 
 		private async Task<bool> ParkVehicle(int garageid, int vehicleid)
 		{
@@ -227,9 +322,6 @@ namespace Garage3.Controllers
 			// get slots for garage
 			int slotsize = garage.SlotSize;
 			var garageslots = await _context.Slots.Include(s=> s.Vehicles).Where(s => s.GarageId == garage.Id).OrderBy(s=> s.No).ToListAsync();
-			foreach (var slot in garageslots) {
-				if ((slot.InUse < 0) || (slot.InUse > slotsize)) throw new ApplicationException($"DEBUG::ParkVehicle - InUse Integrigy test failed - (SlitId: {slot.Id} InUse={slot.InUse})");
-			}
 			int slotcount = garageslots.Count();
 			int slotsizeRequired = vehicle.VehicleType.Size;    // size of vechicle
 			int slotsizeAccumulated = 0;
@@ -266,7 +358,7 @@ namespace Garage3.Controllers
 				vehicle.CheckInTime = DateTime.Now;
 				vehicle.State = VehicleState.Parked;
 				foreach (var slot in SlotsAccumulated) {
-					slot.Vehicles.Add(vehicle);
+					if ((slot.Vehicles != null) && (!slot.Vehicles.Contains(vehicle))) slot.Vehicles.Add(vehicle);		// Expect some DB inconsistence while in development state
 					if (slotsizeRequired <= slotsize)
 					{
 						slot.InUse += slotsizeRequired; // a fraction of the slot is used
@@ -303,13 +395,13 @@ namespace Garage3.Controllers
 				{
 					// vehicle occupy smaller size than a full slot
 					slot.InUse -= parksize;
-					slot.Vehicles.Remove(vehicle);
+					if ((slot.Vehicles != null) && (slot.Vehicles.Contains(vehicle))) slot.Vehicles.Remove(vehicle);	// Expect some DB inconsistence while in development state
 					parksize = 0;
 				}
 				else {
 					// vehicle occupy a full slot
 					slot.InUse = 0;
-					slot.Vehicles.Remove(vehicle);
+					if ((slot.Vehicles != null) && (slot.Vehicles.Contains(vehicle))) slot.Vehicles.Remove(vehicle);    // Expect some DB inconsistence while in development state
 					parksize -= slot.Garage.SlotSize;
 				}
 			}

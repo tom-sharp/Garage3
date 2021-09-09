@@ -1,0 +1,93 @@
+﻿@model Garage3.Models.ViewModels.CheckInViewModel
+@*@inject Path.To.Servcice service*@
+
+@{
+    ViewData["Title"] = "CheckIn";
+}
+
+
+<h1>CheckIn</h1>
+
+<h4>CheckInViewModel</h4>
+<hr />
+
+@if (ViewBag.Message != null)
+{
+    <br /><span style="color:red;">@ViewBag.Message</span>
+}
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CheckIn">
+            <div class="form-group">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <label asp-for="GarageId" class="control-label"></label>
+                <select asp-for="GarageId" asp-items="@Model.GarageList" class="form-control">
+                    <option selected="selected" value="">Please select</option>
+                </select>
+
+                <span asp-validation-for="GarageId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="LicensePlate" class="control-label"></label>
+                <input asp-for="LicensePlate" class="form-control" />
+                <span asp-validation-for="LicensePlate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="VehicleTypeId" class="control-label"></label>
+                <select asp-for="VehicleTypeId" asp-items="@Model.VehicleTypes" class="form-control">
+                    <option selected="selected" value="">Please select</option>
+                </select>
+                <span asp-validation-for="VehicleTypeId" class="text-danger"></span>
+
+            </div>
+
+            
+            <div class="form-group">
+                <label asp-for="Make" class="control-label"></label>
+                <input asp-for="Make" class="form-control" />
+                <span asp-validation-for="Make" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Model" class="control-label"></label>
+                <input asp-for="Model" class="form-control" />
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Color" class="control-label"></label>
+                <select asp-for="Color" asp-items="@Html.GetEnumSelectList<VehicleColor>()" class="form-control"></select>
+                <span asp-validation-for="Color" class="text-danger"></span>
+            </div>
+
+          
+            <div class="form-group">
+                <input asp-for="PersonId" class="form-control" hidden />
+                @*<label asp-for="PersonId" class="control-label"></label>
+                <select asp-for="PersonId" class="form-control" asp-items="ViewBag.PersonId"></select>*@
+            </div>
+            @*<div class="form-group">
+            <label asp-for="CheckInTime" class="control-label"></label>
+            <input asp-for="CheckInTime" class="form-control" />
+            <span asp-validation-for="CheckInTime" class="text-danger"></span>
+        </div>*@
+            <div class="form-group">
+                <label asp-for="State" class="control-label"></label>
+                <select asp-for="State" asp-items="@Html.GetEnumSelectList<VehicleState>()" class="form-control"></select>
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

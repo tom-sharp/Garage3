@@ -27,8 +27,10 @@ namespace Garage3
 		{
 			services.AddControllersWithViews();
 
-		    services.AddDbContext<Garage3Context>(options =>
-		            options.UseSqlServer(Configuration.GetConnectionString("Garage3Context")));
+			services.AddDbContext<Garage3Context>(options =>
+					options.UseSqlServer(Configuration.GetConnectionString("Garage3Context")));
+			services.AddDbContext<Garage3contextNoTracking>(options =>
+					options.UseSqlServer(Configuration.GetConnectionString("Garage3Context")));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
