@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Garage3.Models.Validations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,10 +17,10 @@ namespace Garage3.Models
 		[MinLength(2), MaxLength(50)]
 		public string LastName { get; set; }    // Boat, car..
 
-		[MinLength(2), MaxLength(50)]
+		[EmailAddress]
 		public string Email { get; set; }    // Boat, car..
 
-		[MinLength(2), MaxLength(50)]
+		[SSNValidate(18)]
 		public string SSN { get; set; }    // Boat, car..
 
 		public string BirthDate { get; set; }    // Boat, car..
@@ -36,15 +37,22 @@ namespace Garage3.Models
 			if (this.Email == null) return false;
 			if (this.SSN == null) return false;
 			if (this.BirthDate == null) return false;
-			if (this.MemberType == null) return false;
 			
 			if ((this.FirstName.Length < 2) || (this.FirstName.Length > 50)) return false;
 			if ((this.LastName.Length < 2) || (this.LastName.Length > 50)) return false;
 			if ((this.Email.Length < 2) || (this.Email.Length > 50)) return false;
 			if ((this.SSN.Length < 2) || (this.SSN.Length > 50)) return false;
-
+			//if (!IsValidSwedishPersonIdentificationNumber()) return false;
 			if ((this.MemberType < 0) || (this.MemberType > 10)) return false;
 			return true;
 		}
+
+
+		private bool IsValidSwedishPersonIdentificationNumber()
+        {
+
+
+			return true;
+        }
 	}
 }

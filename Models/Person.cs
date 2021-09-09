@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Garage3.Models.Validations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace Garage3.Models
 		public string Email { get; set; }
 
 		[Display(Name = "Social Security Number")]
+		[SSNValidate(18)]
 		public string SSN { get; set; } // Social Security Number
 		
 //		[DataType(DataType.Date)]
