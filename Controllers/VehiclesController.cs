@@ -313,13 +313,13 @@ namespace Garage3.Controllers
 				{
 					// vehicle occupy smaller size than a full slot
 					slot.InUse -= parksize;
-					slot.Vehicles.Remove(vehicle);
+					if ((slot.Vehicles != null) && (slot.Vehicles.Contains(vehicle))) slot.Vehicles.Remove(vehicle);	// Expect some DB inconsistence while in development state
 					parksize = 0;
 				}
 				else {
 					// vehicle occupy a full slot
 					slot.InUse = 0;
-					slot.Vehicles.Remove(vehicle);
+					if ((slot.Vehicles != null) && (slot.Vehicles.Contains(vehicle))) slot.Vehicles.Remove(vehicle);    // Expect some DB inconsistence while in development state
 					parksize -= slot.Garage.SlotSize;
 				}
 			}
