@@ -15,6 +15,7 @@ namespace Garage3.Models.ViewModels
 			this.Size = garage.Size;
 			this.SlotSize = garage.SlotSize;
 			this.Name = garage.Name;
+			this.FreeSlots = 0;
 		}
 		public bool Validate() {
 			if (this.Name == null) return false;
@@ -25,16 +26,20 @@ namespace Garage3.Models.ViewModels
 		}
 		public int Id { get; set; }
 
-		[Display(Name = "Size (Number of parking slots)")]
+		[Display(Name = "Number of parking slots (Size)")]
 		[Range(0,10000)]
 		public int Size { get; set; }
 
-		[Display(Name = "SlotSize (Size of a parking slot)")]
+		[Display(Name = "Size of a parking slot (SlotSize)")]
 		[Range(1,10)]
 		public int SlotSize { get; set; }
 
 		[Display(Name = "Garage name")]
 		[MinLength(4),MaxLength(50)]
 		public string Name { get; set; }
+
+		[Display(Name = "Free slots")]
+		public int FreeSlots { get; set; }
+
 	}
 }
