@@ -29,7 +29,6 @@ namespace Garage3
 
 		    services.AddDbContext<Garage3Context>(options =>
 		            options.UseSqlServer(Configuration.GetConnectionString("Garage3Context")));
-			//services.AddScoped<"name of serviceinterface", "name of service" > ();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,0 +1,22 @@
+﻿@model IEnumerable<GaragesViewModel>
+<partial name="_OverViewsMenu" />
+
+<table class="table">
+    <thead>
+		<tr>
+			<th>@Html.DisplayNameFor(model => model.Name)</th>
+			<th>@Html.DisplayNameFor(model => model.Size)</th>
+			<th>@Html.DisplayNameFor(model => model.FreeSlots)</th>
+			<th></th>
+		</tr>
+    </thead>
+    <tbody>
+@foreach (var g in Model) {
+		<tr>
+			<td>@g.Name</td>
+			<td>@g.Size</td>
+			<td>@g.FreeSlots</td>
+		</tr>
+}
+    </tbody>
+</table>
