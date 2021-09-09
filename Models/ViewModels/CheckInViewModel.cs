@@ -21,16 +21,12 @@ namespace Garage3.Models.ViewModels
       
         public int VehicleTypeId { get; set; }
         public IEnumerable<SelectListItem> VehicleTypes { get; set; }
-        //[NotMapped]
-       // public IEnumerable<VehicleType> VehicleTypeCollection { get; set; }
-
-
-
+      
         public int PersonId { get; set; }
 
         public DateTime CheckInTime { get; set; }
              
-        public VehicleState State { get; set; }
+      
 
        
     }

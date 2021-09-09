@@ -8,6 +8,7 @@ namespace Garage3.Models
 	public enum VehicleState
 	{
 		UnParked,
-		Parked
+		Parked,
+		TryPark
 	}
 }

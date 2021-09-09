@@ -29,6 +29,7 @@ namespace Garage3
 
 		    services.AddDbContext<Garage3Context>(options =>
 		            options.UseSqlServer(Configuration.GetConnectionString("Garage3Context")));
+			//services.AddAutoMapper(T)
 			//services.AddScoped<"name of serviceinterface", "name of service" > ();
 		}
 
