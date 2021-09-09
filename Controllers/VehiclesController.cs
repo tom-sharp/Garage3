@@ -71,13 +71,95 @@ namespace Garage3.Controllers
 			else
             {
 				ViewBag.Message = "Email exits..";
-				return View();
+				return RedirectToAction(nameof(CheckIn),new { pid=model1.id});
 			}
 				
         }
 
-        // GET: Vehicles/Create
-        public IActionResult Create()
+		public  IActionResult CheckIn(int? pid)
+		{
+            var model = new CheckInViewModel
+            {
+				VehicleTypes = GetVehicleTypeAsync().Result,
+				GarageList=GetGarageListAsync().Result
+            };
+          
+            return View(model);
+			
+		}
+
+
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> CheckIn(CheckInViewModel model)
+		{
+
+			// 1. retirve infoormation about the vehicle 
+			// user input data about vehicle ?   ||  retived from db ?
+
+
+			
+
+			// FreeSlots(garageid) - Returns number of free slots at that garage
+
+			// 2 create a new vehicle and save it to DB as STATE UnParked
+			// 
+
+			// 3. CAll Park (garageid, vehicleid)
+			// retrives the vehicle from DB, chec for slots
+			// if its' abble to park, update state to PARKED and set checkin time
+			// return TRUE if not slots avaiable DO NOTHING STE will still be UNPARKED return FALSE
+
+			// 4. send message yto user about some success or failure
+
+			// other choice to choose other garage ?
+
+
+			//model.CheckInTime = DateTime.Now;
+			//if(ParkVehicle(model.GarageId,))
+			
+			//var vehicle= new Vehicle
+
+			//if (ModelState.IsValid)
+			//{
+			//	_context.Add(vehicle);
+			//	await _context.SaveChangesAsync();
+			//	return RedirectToAction(nameof(Index));
+			//}
+			//ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "Id", "Id", vehicle.PersonId);
+			//return View(vehicle);
+
+			return RedirectToAction(nameof(Index));
+		}
+
+
+		//TODO: place this in its own Service-class
+		private async Task<IEnumerable<SelectListItem>> GetVehicleTypeAsync()
+		{
+			return await _context.VehicleTypes
+						.Select(g => new SelectListItem
+						{
+							Text = g.Name.ToString(),
+                            Value = g.Id.ToString()
+						})
+						.ToListAsync();
+		}
+
+		private async Task<IEnumerable<SelectListItem>> GetGarageListAsync()
+		{
+			return await _context.Garages
+						.Select(g => new SelectListItem
+						{
+							Text = g.Name.ToString(),
+							Value = g.Id.ToString()
+						})
+						.ToListAsync();
+		}
+
+
+		// GET: Vehicles/Create
+		public IActionResult Create()
         {
             ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "Id", "Id");
             return View();
