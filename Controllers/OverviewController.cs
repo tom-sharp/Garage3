@@ -32,11 +32,7 @@ namespace Garage3.Controllers
 
 		public async Task<IActionResult> ParkedVehicles()
 		{
-			var model = await dbReadOnly.Vehicles.Include(v=> v.VehicleType).Include(v=> v.Person).Where(v=> v.State == Models.VehicleState.Parked).OrderBy(v => v.Person).Select(v => new ParkedVehicleViewModel(v)).ToListAsync();
-			foreach (var g in model)
-			{
-				g.FreeSlots = await FreeSlots(g.Id);
-			}
+			var model = await dbReadOnly.Vehicles.Include(v=> v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v=> v.State == Models.VehicleState.Parked).OrderBy(v => v.Person).Select(v => new ParkedVehicleViewModel(v)).ToListAsync();
 			return View(model);
 		}
 

@@ -28,5 +28,26 @@ namespace Garage3.Models
 			else if (hours > 0) return $"{hours} Hours {minutes} Minutes";
 			return $"{minutes} Minutes {seconds} Seconds";
 		}
+
+		public static string ParkedAt(this Vehicle v) {
+			string parkedat = "";
+			int counter = 0;
+			if ((v.Slots != null) && (v.State == VehicleState.Parked)) {
+				foreach (var slot in v.Slots) {
+					if (counter == 0) {
+						if (slot.Garage != null) { parkedat = $"{slot.Garage.Name} "; }
+						else parkedat = $"{slot.GarageId}:";
+					}
+					counter++;
+					if (counter == v.Slots.Count) { 
+						parkedat += $"{slot.No}";
+					}
+					else parkedat += $"{slot.No}, ";
+				}
+			}
+			else if (v.State == VehicleState.UnParked) parkedat = "unparked";
+			else if (v.Slots == null) parkedat = "parked";
+			return parkedat;
+		}
 	}
 }
