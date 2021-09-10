@@ -311,11 +311,35 @@ namespace Garage3.Controllers
 
 
 		// List Persons
-		public async Task<IActionResult> PersonsList()
+		public async Task<IActionResult> PersonsListOLD()
 		{
 			var model = _context.Persons.OrderBy(v => v.FirstName).Select(v => new PersonsViewModel() { FirstName = v.FirstName, LastName = v.LastName, Email = v.Email, SSN = v.SSN, MemberType = v.MemberType, Id = v.Id });
 			return View(await model.ToListAsync());
 
+		}
+
+		public ActionResult PersonList(string sortOrder)
+		{
+			ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+			ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+
+			var persons = from p in _context.Persons select p;
+			switch (sortOrder)
+			{
+				case "name_desc":
+					persons = persons.OrderByDescending(p => p.LastName);
+					break;
+				case "Date":
+					persons = persons.OrderBy(p => p.BirthDate);
+					break;
+				case "date_desc":
+					persons = persons.OrderByDescending(p => p.BirthDate);
+					break;
+				default:
+					persons = persons.OrderBy(p => p.LastName);
+					break;
+			}
+			return View(persons.ToList());
 		}
 
 		// Create Person
