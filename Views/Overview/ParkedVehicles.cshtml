@@ -27,3 +27,6 @@
 		}
 	</tbody>
 </table>
+@if (Model.FirstOrDefault() == null) { 
+	<p>No Vehicles found</p>
+}

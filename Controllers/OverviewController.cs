@@ -1,4 +1,5 @@
 ﻿using Garage3.Data;
+using Garage3.Models;
 using Garage3.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +33,7 @@ namespace Garage3.Controllers
 
 		public async Task<IActionResult> ParkedVehicles()
 		{
-			var model = await dbReadOnly.Vehicles.Include(v=> v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v=> v.State == Models.VehicleState.Parked).OrderBy(v => v.Person).Select(v => new ParkedVehicleViewModel(v)).ToListAsync();
+			var model = await dbReadOnly.Vehicles.Include(v=> v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v=> v.State == Models.VehicleState.Parked).OrderBy(v => v.Person.LastName).Select(v => new ParkedVehicleViewModel(v)).ToListAsync();
 			return View(model);
 		}
 
@@ -49,20 +50,55 @@ namespace Garage3.Controllers
 		// Där vi även ska kunna se hur många
 		// fordon varje medlem har registrerade.Från översiktsvyn ska vi kunna navigera till ägaren
 		// och se alla fordonen
+		// Sortering av medlems översiktsvy
+		//		Denna vy ska sorteras enligt följande regler.
+		//	- Sorteras på medlemmens förnamn.
+		//	- Sorteras endast på de två första tecknen i namnet
+		//	- Om två namn har samma första två tecken så behåller vi ordningen på dessa (stable sort)
+		//	- Sorteringen är case sensitive enligt ASCII (versaler sorteras före gemener)
 
 		[HttpPost]
-		public async Task<IActionResult> SearchMembers([Bind("Search")] SearchViewModel searchtext)
+		public async Task<IActionResult> SearchMembers([Bind("Search")] SearchViewModel searchfor)
 		{
-			var model = await dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v => v.State == Models.VehicleState.Parked).OrderBy(v => v.Person).Select(v => new ParkedVehicleViewModel(v)).ToListAsync();
+			string mfilter = "";
+			if (mfilter == null) return RedirectToAction("Search");
+			if ((searchfor.Search == null) || (searchfor.Search.Length == 0)) mfilter = "";
+			else mfilter = searchfor.Search.ToLower();
+
+
+//			var model = await dbReadOnly.Persons.Include(p => p.Vehicles).Where(p => p.FirstName.ToLower().Contains(mfilter) || p.).OrderBy(v => v.Person).Select(v => new ParkedVehicleViewModel(v)).ToListAsync();
 			return View();
 		}
 
 		// Sökfunktion för fordonstyp och registreringsnummer i översiktsvyn.
 		[HttpPost]
-		public async Task<IActionResult> SearchVehicles([Bind("VehicleTypeId,Search")] SearchViewModel searchtext)
+		public async Task<IActionResult> SearchVehicles([Bind("VehicleTypeId,Search")] SearchViewModel searchfor)
 		{
-			var model = await dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v => v.State == Models.VehicleState.Parked).OrderBy(v => v.Person).Select(v => new ParkedVehicleViewModel(v)).ToListAsync();
-			return View();
+			string lpfilter = "";
+			if (searchfor == null) return RedirectToAction("Search");
+			if ((searchfor.Search == null) || (searchfor.Search.Length == 0)) lpfilter = "";
+			else lpfilter = searchfor.Search.ToLower();
+			int vtfilter = searchfor.VehicleTypeId;
+			IQueryable<SearchVehicleViewModel> model;
+			// four scenarios;
+			if ((vtfilter == 0) && (lpfilter.Length == 0)) {
+				// do not filter
+				model = dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).OrderBy(v => v.LicensePlate).Select(v => new SearchVehicleViewModel(v));
+			}
+			else if ((vtfilter != 0) && (lpfilter.Length == 0)) {
+				// do filter on vehicletype
+				model = dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v=> v.VehicleTypeId == vtfilter).OrderBy(v => v.LicensePlate).Select(v => new SearchVehicleViewModel(v));
+			}
+			else if ((vtfilter == 0) && (lpfilter.Length > 0)) {
+				// do filter on licenseplate
+				model = dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v => v.LicensePlate.ToLower().Contains(lpfilter)).OrderBy(v => v.LicensePlate).Select(v => new SearchVehicleViewModel(v));
+			}
+			else {
+				// filter on vehicle type and licence plate
+				model = dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v => v.VehicleTypeId == vtfilter && v.LicensePlate.ToLower().Contains(lpfilter)).OrderBy(v => v.LicensePlate).Select(v => new SearchVehicleViewModel(v));
+			}
+
+			return View(await model.ToListAsync());
 		}
 
 
