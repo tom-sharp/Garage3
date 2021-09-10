@@ -38,6 +38,8 @@ namespace Garage3.Models
 			
 			if ((this.FirstName.Length < 2) || (this.FirstName.Length > 50)) return false;
 			if ((this.LastName.Length < 2) || (this.LastName.Length > 50)) return false;
+			if (this.FirstName == this.LastName) return false;
+
 			if ((this.Email.Length < 2) || (this.Email.Length > 50)) return false;
 			if ((this.SSN.Length < 2) || (this.SSN.Length > 50)) return false;
 			
