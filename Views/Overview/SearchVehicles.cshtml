@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ParkedVehicleViewModel>
+﻿@model IEnumerable<SearchVehicleViewModel>
 <partial name="_OverViewsMenu" />
 
 <table class="table">
@@ -16,17 +16,18 @@
 	<tbody>
 		@foreach (var v in Model)
 		{
-		<tr>
-			<td>@v.VehicleType</td>
-			<td>@v.LicensePlate</td>
-			<td>@v.ParkedAt</td>
-			<td>@v.ParkedTime</td>
-			<td>@v.Owner</td>
-			<td>@v.MembershipLevel</td>
-		</tr>
+			<tr>
+				<td>@v.VehicleType</td>
+				<td>@v.LicensePlate</td>
+				<td>@v.ParkedAt</td>
+				<td>@v.ParkedTime</td>
+				<td>@v.Owner</td>
+				<td>@v.MembershipLevel</td>
+			</tr>
 		}
 	</tbody>
 </table>
-@if (Model.FirstOrDefault() == null) { 
-	<p>No Vehicles found</p>
+@if (Model.FirstOrDefault() == null)
+{
+	<p>No vehicles found</p>
 }
