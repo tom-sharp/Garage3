@@ -1,0 +1,34 @@
+﻿@model SearchViewModel
+
+@{
+	ViewData["Title"] = "Search";
+}
+
+<hr />
+<div class="row">
+	<form method="post">
+		<table>
+			<tr>
+				<td>
+					<input type="submit" asp-action="SearchMembers" value="Members" class="btn btn-primary" />
+				</td>
+				<td>
+					<input type="text" class="form-control" asp-for="Search" name="Search" placeholder="Search for" />
+				</td>
+				<td>
+					<select asp-for="VehicleTypeId">
+						<option value=0>All types</option>
+						@foreach (var vt in Model.VTypes)
+						{
+							<option value=@vt.Id>@vt.Name</option>
+						}
+					</select>
+				</td>
+				<td>
+					<input type="submit" asp-action="SearchVehicles" value="Vehicles" class="btn btn-primary" />
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>
+<hr />
