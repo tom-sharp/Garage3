@@ -311,35 +311,43 @@ namespace Garage3.Controllers
 
 
 		// List Persons
-		public async Task<IActionResult> PersonsListOLD()
+		public async Task<IActionResult> PersonsList(string sortOrder)
 		{
-			var model = _context.Persons.OrderBy(v => v.FirstName).Select(v => new PersonsViewModel() { FirstName = v.FirstName, LastName = v.LastName, Email = v.Email, SSN = v.SSN, MemberType = v.MemberType, Id = v.Id });
-			return View(await model.ToListAsync());
+			sortOrder = String.IsNullOrEmpty(sortOrder) ? "name" : sortOrder;
 
-		}
-
-		public ActionResult PersonList(string sortOrder)
-		{
-			ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-			ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+			// Toggle SearchOrder for next user click, if it is 
+			ViewBag.NameSortParm = sortOrder == "name" ? "name_desc" : "name";
+			ViewBag.DateSortParm = sortOrder == "date" ? "date_desc" : "date";
 
 			var persons = from p in _context.Persons select p;
+
 			switch (sortOrder)
 			{
 				case "name_desc":
-					persons = persons.OrderByDescending(p => p.LastName);
+					persons = _context.Persons.OrderBy(p => p.FirstName);
 					break;
-				case "Date":
-					persons = persons.OrderBy(p => p.BirthDate);
-					break;
+
+				case "name":
+					persons = _context.Persons.OrderByDescending(p => p.FirstName);
+					break;												
+																		
 				case "date_desc":
-					persons = persons.OrderByDescending(p => p.BirthDate);
+					persons = _context.Persons.OrderBy(p => p.BirthDate); 
+					break;												
+																	
+				case "date":
+					persons = _context.Persons.OrderByDescending(p => p.BirthDate); 
 					break;
+
 				default:
-					persons = persons.OrderBy(p => p.LastName);
+					persons = _context.Persons.OrderBy(p => p.FirstName); 
 					break;
 			}
-			return View(persons.ToList());
+
+			var model = persons.Select(p => new PersonsViewModel() { FirstName = p.FirstName, LastName = p.LastName, Email = p.Email, SSN = p.SSN, BirthDate = p.BirthDate.Date.ToString(), MemberType = p.MemberType, Id = p.Id });
+		
+			return View(await model.ToListAsync());
+
 		}
 
 		// Create Person

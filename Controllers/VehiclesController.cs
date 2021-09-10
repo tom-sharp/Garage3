@@ -146,7 +146,7 @@ namespace Garage3.Controllers
 
 		}
 
-		/*
+		
 		public async Task<IActionResult> CheckInReciept(int id)
 		{
 			var receiptData = _context.Vehicles.Select(p => new CheckInConfirmReceiptViewModel
@@ -164,7 +164,7 @@ namespace Garage3.Controllers
             return View(model1);
 		}
 
-		*/
+		
 		//TODO: place this in its own Service-class
 		private async Task<IEnumerable<SelectListItem>> GetVehicleTypeAsync()
 		{
