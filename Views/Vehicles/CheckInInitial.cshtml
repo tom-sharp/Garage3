@@ -8,9 +8,9 @@
 
 <hr />
 <div>
-    @if (ViewBag.Message1 != null)
+    @if (TempData["Message1"] != null)
     {
-        <br /><span style="color:red;">@ViewBag.Message1</span>
+        <br /><span style="color:red;">@TempData["Message1"]</span>
     }
 
 </div>

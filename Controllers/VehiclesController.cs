@@ -95,14 +95,19 @@ namespace Garage3.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> CheckIn(CheckInViewModel viewModel)
 		{
-			var veh = _context.Vehicles.Where(v => v.LicensePlate == viewModel.LicensePlate && v.State == VehicleState.Parked);
+			var veh = await _context.Vehicles.Where(v => v.LicensePlate == viewModel.LicensePlate && v.State == VehicleState.Parked).ToListAsync();
 			
 			if(veh.Count()>0)
 			{
 				TempData["Message1"] = "Car with License Plate Already Parked";
 				return RedirectToAction(nameof(CheckInInitial));
 			}
-
+			var chkowner = await _context.Vehicles.Where(v => v.LicensePlate == viewModel.LicensePlate && v.PersonId != viewModel.PersonId).ToListAsync();
+			if (chkowner.Count() > 0)
+			{
+				TempData["Message1"] = "Car with License Plate Is Registered With Another Owner";
+				return RedirectToAction(nameof(CheckInInitial));
+			}
 			var vehicle = new Vehicle
 			{	
 				LicensePlate=viewModel.LicensePlate,
@@ -451,6 +456,53 @@ namespace Garage3.Controllers
 			}
 			return true;
 		}
-	}
+
+		public async Task<IActionResult> CheckLicensePlate(string LicensePlate)
+		{
+			// 
+
+			var vehicleModel = await _context.Vehicles.Where(e => e.LicensePlate == LicensePlate).ToListAsync();
+
+			if (vehicleModel.Count()>0)
+			{
+				return Json(true);
+			}
+			else
+			{
+				var vehicleModel1 = vehicleModel.Where(v => v.State == VehicleState.Parked);
+				if (vehicleModel1.Count()>0)
+				{
+					return Json("Vehicle with license plate " + LicensePlate + " is already parked.");
+				}
+				else
+				{
+					return Json(true);
+				}
+			}
+
+		}
+
+		public async Task<IActionResult> CheckGarageSlots(int GarageId)
+		{
+			// 
+			if (GarageId == 0)
+			{
+				return Json("please select garage");
+			}
+			else 
+			{
+				int freeSlots = await FreeSlots(GarageId);
+				if (freeSlots! > 0)
+				{
+					return Json("Garage is full please choose another one");
+				}
+			
+			}
+			
+
+			return Json(true);
+						
+		}
+		}
 }
 
