@@ -4,6 +4,7 @@ using Garage3.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,8 +49,8 @@ namespace Garage3.Controllers
 
 		// Search Members
 		// Där vi även ska kunna se hur många
-		// fordon varje medlem har registrerade.Från översiktsvyn ska vi kunna navigera till ägaren
-		// och se alla fordonen
+		// fordon varje medlem har registrerade.
+		// Från översiktsvyn ska vi kunna navigera till ägaren och se alla fordonen
 		// Sortering av medlems översiktsvy
 		//		Denna vy ska sorteras enligt följande regler.
 		//	- Sorteras på medlemmens förnamn.
@@ -64,10 +65,17 @@ namespace Garage3.Controllers
 			if (mfilter == null) return RedirectToAction("Search");
 			if ((searchfor.Search == null) || (searchfor.Search.Length == 0)) mfilter = "";
 			else mfilter = searchfor.Search.ToLower();
+			IQueryable<SearchMembersViewModel> model;
 
-
-//			var model = await dbReadOnly.Persons.Include(p => p.Vehicles).Where(p => p.FirstName.ToLower().Contains(mfilter) || p.).OrderBy(v => v.Person).Select(v => new ParkedVehicleViewModel(v)).ToListAsync();
-			return View();
+			if (mfilter.Length == 0) {
+				// retrive all members
+				model =  dbReadOnly.Persons.Include(p => p.Vehicles).OrderBy(p => p.FirstName.Substring(0, 2)).Select(p => new SearchMembersViewModel(p));
+			}
+			else {
+				// filter on name
+				model = dbReadOnly.Persons.Include(p => p.Vehicles).Where(p => p.FirstName.ToLower().Contains(mfilter) || p.LastName.ToLower().Contains(mfilter)).OrderBy(p => p.FirstName.Substring(0, 2)).Select(p => new SearchMembersViewModel(p));
+			}
+			return View(await model.ToListAsync());
 		}
 
 		// Sökfunktion för fordonstyp och registreringsnummer i översiktsvyn.
