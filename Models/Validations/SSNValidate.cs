@@ -1,13 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using static Garage3.Models.Validations.PersonIdentity;
-
 using Microsoft.EntityFrameworkCore;
 using Garage3.Data;
 
@@ -15,8 +8,7 @@ namespace Garage3.Models.Validations
 {
     public class SSNValidate : ValidationAttribute
     {
-
-        private  Garage3Context db;// = new Garage3Context();
+        private  Garage3Context db;
 
         public SSNValidate(int minYearsOld)
         {
@@ -24,16 +16,11 @@ namespace Garage3.Models.Validations
             MinYearsOld = minYearsOld;
         }
 
-        //public SSNValidate(int minYearsOld)
-        //{
-        //   MinYearsOld = minYearsOld;
-        //}
-        
-
         private int MinYearsOld { get; set;  }
 
         protected override ValidationResult IsValid(object objectSSN, ValidationContext validationContext)
         {
+            // Get handle to the Database _context
             db = (Garage3Context)validationContext.GetService(typeof(Garage3Context));
             
             string SSN = objectSSN.ToString();
@@ -59,11 +46,13 @@ namespace Garage3.Models.Validations
             }
             else
             {
-                // SSN is not a valid PersonNr, can be a SamordningsNr or ReservNr used at Hospitals = Not allowed for now in this Garage App
+                // SSN is not a valid PersonNr, can be a SamordningsNr or ReservNr used at Hospitals
+                // = Not allowed for now in this Garage App
                 return new ValidationResult($"Invalid SSN. Format SSN as yyyymmdd-xxxx");
             }
         }
 
+        // SSN should only be allowed to be registered once
         private Boolean IsUniqueSSN(string SSN)
         {
             var person = db.Persons.FirstOrDefaultAsync(p => p.SSN == SSN);
