@@ -95,14 +95,19 @@ namespace Garage3.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> CheckIn(CheckInViewModel viewModel)
 		{
-			var veh = _context.Vehicles.Where(v => v.LicensePlate == viewModel.LicensePlate && v.State == VehicleState.Parked);
+			var veh = await _context.Vehicles.Where(v => v.LicensePlate == viewModel.LicensePlate && v.State == VehicleState.Parked).ToListAsync();
 			
 			if(veh.Count()>0)
 			{
 				TempData["Message1"] = "Car with License Plate Already Parked";
 				return RedirectToAction(nameof(CheckInInitial));
 			}
-
+			var chkowner = await _context.Vehicles.Where(v => v.LicensePlate == viewModel.LicensePlate && v.PersonId != viewModel.PersonId).ToListAsync();
+			if (chkowner.Count() > 0)
+			{
+				TempData["Message1"] = "Car with License Plate Is Registered With Another Owner";
+				return RedirectToAction(nameof(CheckInInitial));
+			}
 			var vehicle = new Vehicle
 			{	
 				LicensePlate=viewModel.LicensePlate,
