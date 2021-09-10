@@ -26,6 +26,7 @@ namespace Garage3.Data
 		public DbSet<VehicleType> VehicleTypes { get; set; }
 		public DbSet<Slot> Slots { get; set; }
 		public DbSet<Garage> Garages { get; set; }
+		public DbSet<Garage3.Models.ViewModels.CheckInConfirmReceiptViewModel> CheckInConfirmReceiptViewModel { get; set; }
 		
 
 	}
