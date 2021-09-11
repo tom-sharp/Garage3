@@ -16,14 +16,15 @@
 	<tbody>
 		@foreach (var v in Model)
 		{
-			<tr>
-				<td>@v.VehicleType</td>
-				<td>@v.LicensePlate</td>
-				<td>@v.ParkedAt</td>
-				<td>@v.ParkedTime</td>
-				<td>@v.Owner</td>
-				<td>@v.MembershipLevel</td>
-			</tr>
+		<tr>
+			<td>@v.VehicleType</td>
+			<td>@v.LicensePlate</td>
+			<td>@v.ParkedAt</td>
+			<td>@v.ParkedTime</td>
+			<td>@v.Owner</td>
+			<td>@v.MembershipLevel</td>
+			<td><a asp-controller="Vehicles" asp-action="CheckOut" asp-route-id="@v.Id">CheckOut</a></td>
+		</tr>
 		}
 	</tbody>
 </table>

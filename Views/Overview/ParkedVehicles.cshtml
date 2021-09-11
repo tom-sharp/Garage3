@@ -23,6 +23,7 @@
 			<td>@v.ParkedTime</td>
 			<td>@v.Owner</td>
 			<td>@v.MembershipLevel</td>
+			<td><a asp-controller="Vehicles" asp-action="CheckOut" asp-route-id="@v.Id">CheckOut</a></td>
 		</tr>
 		}
 	</tbody>
