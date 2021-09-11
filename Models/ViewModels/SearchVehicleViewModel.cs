@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Garage3.Models.ViewModels
 {
-	public class ParkedVehicleViewModel
+	public class SearchVehicleViewModel
 	{
-		public ParkedVehicleViewModel(Vehicle v) {
+		public SearchVehicleViewModel(Vehicle v)
+		{
 			this.Id = v.Id;
 			this.VehicleType = v.VehicleType.Name;
 			this.LicensePlate = v.LicensePlate;
@@ -19,7 +20,6 @@ namespace Garage3.Models.ViewModels
 		}
 
 		// Ägare, Medlemskap, Fordonstyp, RegNum och ParkTid som minimum
-
 
 		public int Id { get; set; }
 
@@ -40,6 +40,5 @@ namespace Garage3.Models.ViewModels
 
 		[Display(Name = "Membership level")]
 		public int MembershipLevel { get; set; }
-
 	}
 }
