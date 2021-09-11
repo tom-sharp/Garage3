@@ -422,7 +422,7 @@ namespace Garage3.Controllers
 		private async Task<bool> UnParkVehicle(int vehicleid)
 		{
 			if (vehicleid <= 0) return false;
-			var vehicle = _context.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).ThenInclude(s=> s.Garage).FirstOrDefault(v => v.Id == vehicleid);
+			var vehicle = _context.Vehicles.Include(v => v.VehicleType).Include(v=> v.Person).Include(v => v.Slots).ThenInclude(s=> s.Garage).FirstOrDefault(v => v.Id == vehicleid);
 			if ((vehicle == null) || (vehicle.State != VehicleState.Parked)) return false;
 			vehicle.Slots = vehicle.Slots.OrderBy(s=> s.No).ToList();
 			int parksize = vehicle.VehicleType.Size;
@@ -444,6 +444,8 @@ namespace Garage3.Controllers
 
 			vehicle.CheckOutTime = DateTime.Now;
 			vehicle.State = VehicleState.UnParked;
+			var pricing = new Pricing();
+			vehicle.ChargeAmount = pricing.GetPrice(vehicle, vehicle.Person.MemberType);
 
 			_context.Update(vehicle);
 			try
