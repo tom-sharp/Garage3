@@ -1,0 +1,14 @@
+﻿@model IEnumerable<GaragesViewModel>
+
+<h4>CheckIn Random Vehicles</h4>
+
+<form asp-action="CheckInRandom">
+	<input type="text" name="num" />
+	<select name="garageid">
+		@foreach (var g in Model)
+		{
+			<option value=@g.Id>@g.Name</option>
+		}
+	</select>
+	<input type="submit" value="CheckIn" />
+</form>

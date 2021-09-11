@@ -306,6 +306,72 @@ namespace Garage3.Controllers
 			return _context.Vehicles.Any(e => e.Id == id);
 		}
 
+		public async Task<IActionResult> CheckInRandom(int? garageid, int? num)
+		{
+			var model = _context.Garages.OrderBy(g => g.Name).Select(g => new GaragesViewModel(g));
+
+
+			if ((garageid == null) || (garageid <= 0)) return View(await model.ToListAsync());
+			if ((num == null) || (num <= 0)) return View(await model.ToListAsync());
+
+			var garage = await _context.Garages.FirstOrDefaultAsync(g => g.Id == garageid);
+			if (garage == null) return View("_Msg", new MsgViewModel($"Could not find garage (id = {garageid}) to check in to"));
+
+			var fake = new FakeRepository();
+			List <VehicleType> VT = await _context.VehicleTypes.ToListAsync();
+			int checkinNum = num > 100 ? 100 : (int)num;
+			int counter = 0;
+			int personcounter = 0;
+			Person newperson;
+			Vehicle newvehicle;
+			while (counter < checkinNum) {
+
+				// first try create person
+				newperson = new Person() { LastName = fake.GetRndLastName(), FirstName = fake.GetRndFirstName(), SSN = fake.GetRndSSN() };
+				newperson.BirthDate = fake.GetRndBirthDate(newperson.SSN);
+				newperson.Email = fake.GetRndEmail(newperson.FirstName, newperson.LastName);
+
+				var res = await _context.Persons.FirstOrDefaultAsync(p => p.SSN == newperson.SSN || p.Email == newperson.Email);
+				if (res == null)
+				{
+					// user dont exist - create it
+					_context.Persons.Add(newperson);
+					await _context.SaveChangesAsync();
+					personcounter++;
+				}
+				else {
+					// user exist - use that one 
+					newperson = res;
+				}
+
+				while (true) {
+					// create the vehicle
+					newvehicle = new Vehicle() { LicensePlate = fake.GetRndLicensePlateNumber(), PersonId = newperson.Id, Make = fake.GetRndVehicleBrand(), State = VehicleState.TryPark, Model = "fake"  };
+					newvehicle.VehicleTypeId = VT[fake.GetRndInt(0, VT.Count)].Id;
+					var v = await _context.Vehicles.FirstOrDefaultAsync(v=> v.LicensePlate.ToLower() == newvehicle.LicensePlate.ToLower());
+
+					if (v == null) {
+						// does not exist - save it
+						_context.Vehicles.Add(newvehicle);
+						await _context.SaveChangesAsync();
+
+						// Try To Park
+						if (await ParkVehicle(garage.Id, newvehicle.Id))
+						{
+							// success
+							counter++;
+							break;
+						}
+						else {
+							// failed - expected garage is full
+							return View("_Msg", new MsgViewModel($" {personcounter} People was created. Was not able to Park more than {counter} Vehicles - possible garage is full"));
+						}
+					}
+				}
+			}
+			return View("_Msg", new MsgViewModel($" {personcounter} People was created. {counter} Vehicles was parked"));
+		}
+
 		public async Task<IActionResult> TestPark()
 		{
 			var garage = await _context.Garages.FirstOrDefaultAsync(g=> g.Size > 0);
