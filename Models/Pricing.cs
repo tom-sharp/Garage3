@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Garage3.Models.Services
+namespace Garage3.Models
 {
 
-	public class Pricing : IPricing
+	public class Pricing
 	{
 		public int GetPrice(Vehicle vehicle, int membershiplevel)
 		{
