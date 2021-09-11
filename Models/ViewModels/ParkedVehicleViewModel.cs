@@ -9,6 +9,7 @@ namespace Garage3.Models.ViewModels
 	public class ParkedVehicleViewModel
 	{
 		public ParkedVehicleViewModel(Vehicle v) {
+			this.Id = v.Id;
 			this.VehicleType = v.VehicleType.Name;
 			this.LicensePlate = v.LicensePlate;
 			this.ParkedTime = (DateTime.Now - v.CheckInTime).TimedString();
@@ -18,6 +19,9 @@ namespace Garage3.Models.ViewModels
 		}
 
 		// Ägare, Medlemskap, Fordonstyp, RegNum och ParkTid som minimum
+
+
+		public int Id { get; set; }
 
 		[Display(Name = "Vehicle type")]
 		public string VehicleType { get; set; }
