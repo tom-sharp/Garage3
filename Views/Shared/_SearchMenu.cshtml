@@ -9,13 +9,10 @@
 		<table>
 			<tr>
 				<td>
-					<input type="submit" asp-action="SearchMembers" value="Members" class="btn btn-primary" />
-				</td>
-				<td>
 					<input type="text" class="form-control" asp-for="Search" name="Search" placeholder="Search for" />
 				</td>
 				<td>
-					<select asp-for="VehicleTypeId">
+					<select asp-for="VehicleTypeId" class="form-control">
 						<option value=0>All types</option>
 						@foreach (var vt in Model.VTypes)
 						{
@@ -25,6 +22,9 @@
 				</td>
 				<td>
 					<input type="submit" asp-action="SearchVehicles" value="Vehicles" class="btn btn-primary" />
+				</td>
+				<td>
+					<input type="submit" asp-action="SearchMembers" value="Members" class="btn btn-primary" />
 				</td>
 			</tr>
 		</table>
