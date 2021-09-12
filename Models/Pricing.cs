@@ -11,15 +11,19 @@ namespace Garage3.Models
 		public int GetPrice(Vehicle vehicle, int membershiplevel)
 		{
 			int minutes = (int)(vehicle.CheckOutTime - vehicle.CheckInTime).TotalMinutes;
-			return GetMemberShipPrice(minutes, membershiplevel);
+			if (vehicle.VehicleType != null) { 
+				return GetMemberShipPrice(vehicle.VehicleType.Size, minutes, membershiplevel);
+			}
+			// if vehicle type not provide - fall back to vehicle size 3
+			return GetMemberShipPrice(3, minutes, membershiplevel);
 		}
 
 		// Pricemodels
 
-		private int GetMemberShipPrice(int minutes, int membershiplevel)
+		private int GetMemberShipPrice(int vehiclesize, int minutes, int membershiplevel)
 		{
 			double amount = 0;
-			double minuterate = 0.99;
+			double minuterate = 0.33;	// per slotsize unit
 			switch (membershiplevel)
 			{
 				case 0:                                     // Basic membership

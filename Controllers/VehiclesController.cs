@@ -398,6 +398,26 @@ namespace Garage3.Controllers
 			return View("_Msg", new MsgViewModel("failed check-out (test)"));
 		}
 
+
+		public async Task<IActionResult> CheckOutTemp(int? vehicleid)
+		{
+			if (vehicleid == null) return RedirectToAction("CheckInInitial");
+			var vehicle = await _context.Vehicles.FirstOrDefaultAsync(v => v.Id == vehicleid);
+			if (vehicle == null) return RedirectToAction("CheckInInitial");
+
+			if (await UnParkVehicle(vehicle.Id))
+			{
+				return View("_Msg", new MsgViewModel($"{vehicle.LicensePlate} checked out, Cost SEK {vehicle.ChargeAmount} Kr"));
+			}
+			switch (vehicle.State) {
+				case VehicleState.Parked: return View("_Msg", new MsgViewModel($"check out failed - vehicle still parked"));
+				case VehicleState.UnParked: return View("_Msg", new MsgViewModel($"checkout failed vehicle already unparked"));
+				case VehicleState.TryPark: return View("_Msg", new MsgViewModel($"checkout failed vehicle is not parked"));
+			}
+			return View("_Msg", new MsgViewModel($"Failed checkout, unhadeld stat property"));
+		}
+
+
 		private async Task<int> FreeSlots(int garageid) {
 			if (garageid <= 0) return 0;
 			var garage = await _context.Garages.FindAsync(garageid);
@@ -524,6 +544,7 @@ namespace Garage3.Controllers
 			}
 			return true;
 		}
+
 
 		public async Task<IActionResult> CheckLicensePlate(string LicensePlate)
 		{
