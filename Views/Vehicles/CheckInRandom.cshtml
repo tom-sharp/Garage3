@@ -1,14 +1,52 @@
-﻿@model IEnumerable<GaragesViewModel>
+﻿@model CheckInRandomViewModel
+@*@inject Path.To.Servcice service*@
+
 
 <h4>CheckIn Random Vehicles</h4>
 
-<form asp-action="CheckInRandom" >
-	<input type="text" name="num" placeholder="Number of vehicles"/>
-	<select name="garageid" >
-		@foreach (var g in Model)
+@if (ViewBag.msg != null)
+{
+	<br /><span style="color:red;">@ViewBag.msg</span>
+}
+
+
+<div>
+	<form asp-action="CheckInRandom">
+
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<br />
+		<input asp-for="NumVehicles" value="@Model.NumVehicles" placeholder="Number of vehicles" />
+		<!--		<label asp-for="GarageId" class="control-label"></label>-->
+		<select asp-for="GarageId" asp-items="@Model.GarageList">
+			<option selected="selected" value="">Select Garage</option>
+		</select>
+
+		<input type="submit" value="CheckIn" />
+		<span asp-validation-for="NumVehicles" class="text-danger"></span>
+		<span asp-validation-for="GarageId" class="text-danger"></span>
+	</form>
+
+</div>
+
+
+@section Scripts {
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+
+
+<!--
+
+<form asp-action="CheckInRandom">
+	<input type="text" name="num" placeholder="Number of vehicles" />
+	<select name="garageid">
+		@*foreach (var g in Model)
 		{
 			<option value=@g.Id>@g.Name</option>
-		}
+		}*@
 	</select>
 	<input type="submit" value="CheckIn" />
 </form>
+
+-->
