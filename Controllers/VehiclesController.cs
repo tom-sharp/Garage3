@@ -524,7 +524,25 @@ namespace Garage3.Controllers
 				catch (DbUpdateException){
 					// change back state as entity is still tracked
 					vehicle.State = VehicleState.TryPark;
-					vehicle.Slots.Clear();
+					slotsizeRequired = vehicle.VehicleType.Size;
+					foreach (var slot in vehicle.Slots)
+					{
+						if (slotsizeRequired < slot.Garage.SlotSize)
+						{
+							// vehicle occupy smaller size than a full slot
+							slot.InUse -= slotsizeRequired;
+							if ((slot.Vehicles != null) && (slot.Vehicles.Contains(vehicle))) slot.Vehicles.Remove(vehicle);    // Expect some DB inconsistence while in development state
+							slotsizeRequired = 0;
+						}
+						else
+						{
+							// vehicle occupy a full slot
+							slot.InUse = 0;
+							if ((slot.Vehicles != null) && (slot.Vehicles.Contains(vehicle))) slot.Vehicles.Remove(vehicle);    // Expect some DB inconsistence while in development state
+							slotsizeRequired -= slot.Garage.SlotSize;
+						}
+					}
+
 					return false;
 				}
 				return true;
