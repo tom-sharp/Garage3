@@ -142,7 +142,7 @@ namespace Garage3.Controllers
 			}
             else
             {
-				TempData["Message1"] = "Cannot Park.. Not Enough Space";
+				TempData["Message1"] = "Not Enough Space";
 				return RedirectToAction(nameof(CheckInInitial));
 			}
 
