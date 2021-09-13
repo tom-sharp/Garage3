@@ -24,6 +24,12 @@ namespace Garage3
 		public IConfiguration Configuration { get; }
 
 		// This method gets called by the runtime. Use this method to add services to the container.
+
+
+		//  :::::: if deleteing DB and run update-database use;		::::::
+		//  :::::: update-database -Context Garage3Context			::::::
+
+
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllersWithViews();

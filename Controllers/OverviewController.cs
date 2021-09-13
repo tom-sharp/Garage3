@@ -91,19 +91,19 @@ namespace Garage3.Controllers
 			// four scenarios;
 			if ((vtfilter == 0) && (lpfilter.Length == 0)) {
 				// do not filter
-				model = dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).OrderBy(v => v.LicensePlate).Select(v => new SearchVehicleViewModel(v));
+				model = dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v=> v.State == VehicleState.Parked || v.State == VehicleState.UnParked).OrderBy(v => v.LicensePlate).Select(v => new SearchVehicleViewModel(v));
 			}
 			else if ((vtfilter != 0) && (lpfilter.Length == 0)) {
 				// do filter on vehicletype
-				model = dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v=> v.VehicleTypeId == vtfilter).OrderBy(v => v.LicensePlate).Select(v => new SearchVehicleViewModel(v));
+				model = dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v=> v.VehicleTypeId == vtfilter).Where(v => v.State == VehicleState.Parked || v.State == VehicleState.UnParked).OrderBy(v => v.LicensePlate).Select(v => new SearchVehicleViewModel(v));
 			}
 			else if ((vtfilter == 0) && (lpfilter.Length > 0)) {
 				// do filter on licenseplate
-				model = dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v => v.LicensePlate.ToLower().Contains(lpfilter)).OrderBy(v => v.LicensePlate).Select(v => new SearchVehicleViewModel(v));
+				model = dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v => v.LicensePlate.ToLower().Contains(lpfilter)).Where(v => v.State == VehicleState.Parked || v.State == VehicleState.UnParked).OrderBy(v => v.LicensePlate).Select(v => new SearchVehicleViewModel(v));
 			}
 			else {
 				// filter on vehicle type and licence plate
-				model = dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v => v.VehicleTypeId == vtfilter && v.LicensePlate.ToLower().Contains(lpfilter)).OrderBy(v => v.LicensePlate).Select(v => new SearchVehicleViewModel(v));
+				model = dbReadOnly.Vehicles.Include(v => v.VehicleType).Include(v => v.Slots).Include(v => v.Person).Where(v => v.VehicleTypeId == vtfilter && v.LicensePlate.ToLower().Contains(lpfilter)).Where(v => v.State == VehicleState.Parked || v.State == VehicleState.UnParked).OrderBy(v => v.LicensePlate).Select(v => new SearchVehicleViewModel(v));
 			}
 
 			return View(await model.ToListAsync());
