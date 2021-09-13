@@ -522,6 +522,9 @@ namespace Garage3.Controllers
 					await _context.SaveChangesAsync();
 				}
 				catch (DbUpdateException){
+					// change back state as entity is still tracked
+					vehicle.State = VehicleState.TryPark;
+					vehicle.Slots.Clear();
 					return false;
 				}
 				return true;
