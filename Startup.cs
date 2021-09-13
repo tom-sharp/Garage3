@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Garage3.Data;
+using Garage3.Models.Services;
 
 namespace Garage3
 {
@@ -31,6 +32,9 @@ namespace Garage3
 					options.UseSqlServer(Configuration.GetConnectionString("Garage3Context")));
 			services.AddDbContext<Garage3contextNoTracking>(options =>
 					options.UseSqlServer(Configuration.GetConnectionString("Garage3Context")));
+
+
+			services.AddSingleton<ISlotManager, MemorySlotManager>();
 
 		}
 
