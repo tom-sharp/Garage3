@@ -1,4 +1,5 @@
 using Garage3.Data;
+using Garage3.Models.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,19 +23,32 @@ namespace Garage3
             {
                 var services = scope.ServiceProvider;
 
-                try
-                {
-                    SeedData.InitAsync(services).Wait();
-                }
-                catch (Exception e)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(e.Message, "Seed Fail");
-                }
+				try
+				{
+					SeedData.InitAsync(services).Wait();
+				}
+				catch (Exception e)
+				{
+					var logger = services.GetRequiredService<ILogger<Program>>();
+					logger.LogError(e.Message, "Seed Fail");
+				}
 
-            }
+				// Init Memory Slotmanager - Reading DB with Slots
+				// for some reson both SeedData and MemorySlotManager init can not both init
+				// exception it thrown about disposed db
+				//try
+				//{
 
-            host.Run();
+				//	MemorySlotManager.Run(services).Wait();
+				//}
+				//catch (Exception ex) {
+				//	var logger = services.GetRequiredService<ILogger<Program>>();
+				//	logger.LogError(ex.Message, "Memory slotmanager init failed");
+				//}
+
+			}
+
+			host.Run();
 
         }
 

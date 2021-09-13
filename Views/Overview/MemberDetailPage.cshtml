@@ -1,0 +1,100 @@
+﻿@model Garage3.Models.ViewModels.MemberDetailsViewModel
+
+
+@{
+    ViewData["Title"] = "MemberDetailPage";
+}
+
+<h1>MemberDetailPage</h1>
+
+<div>
+   
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.SSN)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.SSN)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.MemberType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MemberType)
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <h5>Vehicles lists:</h5>
+    @{ List<string> LicensePlateno = new();
+
+
+        <table class="table col-md-9">
+            <thead>
+                <tr>
+                    <th>LicensePlate Number</th>
+                    <th>Vehicle Type</th>
+                    <th>Color</th>
+                    <th>Make</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            @foreach (var item in Model.VehicleList)
+            {
+                if (LicensePlateno.Contains(item.LicensePlate))
+                { continue; }
+
+                <tr>
+
+                    <td class="col-md-4">
+                        @item.LicensePlate
+                    </td>
+                    <td class="col-md-4">
+                        @item.VehicleType.Name
+                    </td>
+                    <td class="col-md-4">
+                        @item.Color
+                    </td>
+                    <td class="col-md-4">
+                        @item.Make
+                    </td>
+
+                </tr>
+
+             
+
+            }
+        </table>
+        @if (Model.VehicleList.Count == 0)
+        {
+            <span>Member does not own any car</span>
+        }
+
+    }
+
+</div>
+<div>
+    @*<a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |*@
+    <a asp-action="Index">Back to List</a>
+</div>

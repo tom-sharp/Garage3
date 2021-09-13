@@ -14,7 +14,7 @@ namespace Garage3.Controllers
 	public class OverviewController : Controller
 	{
 		private readonly Garage3contextNoTracking dbReadOnly;
-
+		
 		public OverviewController(Garage3contextNoTracking context) { dbReadOnly = context;	}
 		public IActionResult Index() { return View(); }
 
@@ -108,6 +108,32 @@ namespace Garage3.Controllers
 
 			return View(await model.ToListAsync());
 		}
+
+
+		public async Task<IActionResult> MemberDetailPage(int id)
+		{
+			var personData =  dbReadOnly.Persons.Include(p=>p.Vehicles).ThenInclude(v=>v.VehicleType).Where(p => p.Id == id).Select(p => new MemberDetailsViewModel
+            {
+
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                SSN = p.SSN,
+                Email = p.Email,
+                MemberType = p.MemberType,
+				VehicleList=p.Vehicles
+               
+
+            }).FirstOrDefault();
+				
+			return View(personData);
+		}
+
+		//public async Task<IActionResult> VehiclePage(int id)
+		//{
+		//	var vehlist = await dbReadOnly.Vehicles.
+           
+		//	return View(vehlist);
+		//}
 
 
 		private async Task<int> FreeSlots(int garageid)
