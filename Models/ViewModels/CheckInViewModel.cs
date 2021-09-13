@@ -21,10 +21,10 @@ namespace Garage3.Models.ViewModels
         [Required(ErrorMessage = "LicensePlate number  is required.")]
         [Remote(action: "CheckLicensePlate", controller: "Vehicles")]
         public string LicensePlate { get; set; }
+        [Remote(action: "CheckGarageSlots", controller: "Vehicles")]
         public int GarageId { get; set; }
 
         [Required(ErrorMessage = "Must Select One of Vehicle Types.")]
-        [Remote(action: "CheckGarageSlots", controller: "Vehicles")]
         public IEnumerable<SelectListItem> GarageList { get; set; }
 
       

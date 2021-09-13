@@ -597,7 +597,7 @@ namespace Garage3.Controllers
 
 			var vehicleModel = await _context.Vehicles.Where(e => e.LicensePlate == LicensePlate).ToListAsync();
 
-			if (vehicleModel.Count()>0)
+			if (vehicleModel.Count()==0)
 			{
 				return Json(true);
 			}
@@ -619,19 +619,14 @@ namespace Garage3.Controllers
 		public async Task<IActionResult> CheckGarageSlots(int GarageId)
 		{
 			// 
-			if (GarageId == 0)
-			{
-				return Json("please select garage");
-			}
-			else 
-			{
+			
 				int freeSlots = await FreeSlots(GarageId);
-				if (freeSlots! > 0)
+				if (freeSlots== 0)
 				{
 					return Json("Garage is full please choose another one");
 				}
 			
-			}
+			
 			
 
 			return Json(true);
