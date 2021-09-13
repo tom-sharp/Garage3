@@ -12,19 +12,21 @@ namespace Garage3.Models.Validations
     public class SSNValidate : ValidationAttribute
     {
         private  Garage3Context db;
+        private int MinYearsOld { get; set; }
+        private int Id { get; set; }
 
         public SSNValidate(int minYearsOld)
         {
-          
             MinYearsOld = minYearsOld;
         }
 
-        private int MinYearsOld { get; set;  }
-
+      
         protected override ValidationResult IsValid(object objectSSN, ValidationContext validationContext)
         {
             // Get handle to the Database _context
             db = (Garage3Context)validationContext.GetService(typeof(Garage3Context));
+
+            Id = ((Person)validationContext.ObjectInstance).Id;
             
             string SSN = objectSSN.ToString();
 
@@ -60,7 +62,7 @@ namespace Garage3.Models.Validations
         // SSN should only be allowed to be registered once
         private bool IsUniqueSSN(string SSN)
         {
-            return ! db.Persons.Any(p => p.SSN == SSN); // Dimitris Way in University / StundentsController
+            return ! db.Persons.Any(p => p.SSN == SSN && p.Id != Id); // Dimitris Way in University / StundentsController
         }
 
     }

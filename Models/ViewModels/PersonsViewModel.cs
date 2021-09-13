@@ -5,24 +5,30 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Garage3.Models
 {
-	public class PersonsViewModel
+	public class PersonsViewModel // : IValidatableObject
 	{
 		public int Id { get; set; }
 
+		[Required]
 		[MinLength(2), MaxLength(50)]
 		public string FirstName { get; set; }
 
+		[Required]
 		[MinLength(2), MaxLength(50)]
 		public string LastName { get; set; }
 
+		[Required]
 		[EmailAddress]
 		public string Email { get; set; }
 
+		[Required]
 		[SSNValidate(18)]
 		public string SSN { get; set; }
 
+		[Required]
 		public string BirthDate { get; set; }
 
+		[Required]
 		[Range(1,100)]
 		public int MemberType { get; set; }
 
@@ -47,5 +53,13 @@ namespace Garage3.Models
 			return true;
 		}
 
-	}
+    //    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    //    {
+    //       if(FirstName == LastName)
+    //        {
+				//yield return new ValidationResult($"{FirstName} cant be same as lastname", new[] { nameof(FirstName) });
+    //        }
+    //    }
+    }
+
 }
