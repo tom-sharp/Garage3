@@ -27,14 +27,14 @@ namespace Garage3.Models
 			switch (membershiplevel)
 			{
 				case 0:                                     // Basic membership
-					amount = minuterate * minutes;
+					amount = minuterate * minutes * vehiclesize;
 					break;
 				case 1:                                     // Level 1
-					amount = minuterate * minutes;
+					amount = minuterate * minutes * vehiclesize;
 					amount *= 0.95; // 5% discount
 					break;
 				default:                                    // Invalid membership - fall down to basic
-					amount = minuterate * minutes;
+					amount = minuterate * minutes * vehiclesize;
 					break;
 			}
 			return (int)amount;

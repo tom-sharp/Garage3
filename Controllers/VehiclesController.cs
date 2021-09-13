@@ -306,32 +306,26 @@ namespace Garage3.Controllers
 			return _context.Vehicles.Any(e => e.Id == id);
 		}
 
-//		public async Task<IActionResult> CheckInRandom(int? garageid, int? numvehicles)
-		public async Task<IActionResult> CheckInRandom(CheckInRandomViewModel ch)
+		public async Task<IActionResult> CheckInRandom(int? garageid, int? num)
 		{
-			int garageid = ch.GarageId;
-			int numvehicles = ch.NumVehicles;
+			var model = _context.Garages.OrderBy(g => g.Name).Select(g => new GaragesViewModel(g));
 
-			if ((!ModelState.IsValid) || (!ch.IsValid())) {
-				var model = new CheckInRandomViewModel
-				{
-					GarageList = GetGarageListAsync().Result
-				};
-				return View(model);
-			}
 
+			if ((garageid == null) || (garageid <= 0)) return View(await model.ToListAsync());
+			if ((num == null) || (num <= 0)) return View(await model.ToListAsync());
 
 			var garage = await _context.Garages.FirstOrDefaultAsync(g => g.Id == garageid);
 			if (garage == null) return View("_Msg", new MsgViewModel($"Could not find garage (id = {garageid}) to check in to"));
 
 			var fake = new FakeRepository();
 			List <VehicleType> VT = await _context.VehicleTypes.ToListAsync();
-			int checkinNum = numvehicles > 100 ? 100 : (int)numvehicles;
+			int checkinNum = num > 100 ? 100 : (int)num;
 			int counter = 0;
 			int personcounter = 0;
 			Person newperson;
 			Vehicle newvehicle;
 			while (counter < checkinNum) {
+
 				// first try create person
 				newperson = new Person() { LastName = fake.GetRndLastName(), FirstName = fake.GetRndFirstName(), SSN = fake.GetRndSSN() };
 				newperson.BirthDate = fake.GetRndBirthDate(newperson.SSN);
@@ -413,7 +407,7 @@ namespace Garage3.Controllers
 
 			if (await UnParkVehicle(vehicle.Id))
 			{
-				return View("_Msg", new MsgViewModel($"{vehicle.LicensePlate} checked out, Cost SEK {vehicle.ChargeAmount} Kr"));
+				return View("_Msg", new MsgViewModel($"{vehicle.LicensePlate} checked out, ParkingTime {(vehicle.CheckOutTime - vehicle.CheckInTime).TimedString()}, Cost SEK {vehicle.ChargeAmount} Kr"));
 			}
 			switch (vehicle.State) {
 				case VehicleState.Parked: return View("_Msg", new MsgViewModel($"check out failed - vehicle still parked"));
@@ -423,16 +417,6 @@ namespace Garage3.Controllers
 			return View("_Msg", new MsgViewModel($"Failed checkout, unhadeld stat property"));
 		}
 
-		public IActionResult IsFreeSlots(int GarageId) {
-			if (FreeSlots(GarageId).Result > 0)	return Json(true);
-			return Json(false);
-		}
-
-		public IActionResult IsRandomVehicles(int NumVehicles)
-		{
-			if ((NumVehicles > 0) && (NumVehicles <= 100)) return Json(true);
-			return Json(false);
-		}
 
 		private async Task<int> FreeSlots(int garageid) {
 			if (garageid <= 0) return 0;
@@ -448,8 +432,6 @@ namespace Garage3.Controllers
 			}
 			return counter;
 		}
-
-
 
 		private async Task<bool> ParkVehicle(int garageid, int vehicleid)
 		{
