@@ -19,7 +19,10 @@
 			<td>@p.LastName</td>
 			<td>@p.Email</td>
 			<td>@p.VehiclesOwned</td>
-			<td><a asp-action="MemberDetails" asp-route-id="@p.Id">Details</a></td>
+            <td>
+                <a asp-controller="Overview" asp-action="MemberDetailPage" asp-route-id="@p.Id">Details</a> 
+                @*<a asp-action="MemberDetails" asp-route-id=>Details</a>*@
+            </td>
 		</tr>
 		}
 	</tbody>
