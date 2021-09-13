@@ -136,7 +136,7 @@ namespace Garage3.Controllers
 			if (allowPark) 
 			{
 
-				TempData["Message1"] = "Is Parked";
+				TempData["Message"] = "Is Parked";
 				return RedirectToAction(nameof(CheckInReciept), new { id = vehicleId });
 
 			}
@@ -621,11 +621,11 @@ namespace Garage3.Controllers
 			// 
 			
 				int freeSlots = await FreeSlots(GarageId);
-				if (freeSlots== 0)
-				{
-					return Json("Garage is full please choose another one");
-				}
-			
+			if (freeSlots == 0)
+			{
+				return Json("Garage is full please choose another one");
+			}
+		
 			
 			
 
