@@ -306,20 +306,32 @@ namespace Garage3.Controllers
 			return _context.Vehicles.Any(e => e.Id == id);
 		}
 
-		public async Task<IActionResult> CheckInRandom(int? garageid, int? num)
-		{
-			var model = _context.Garages.OrderBy(g => g.Name).Select(g => new GaragesViewModel(g));
+
+		//		public async Task<IActionResult> CheckInRandom(int? garageid, int? numvehicles)
+		public async Task<IActionResult> CheckInRandom(CheckInRandomViewModel ch) {
+
+			int garageid = ch.GarageId;
+			int numvehicles = ch.NumVehicles;
+
+			if ((!ModelState.IsValid) || (!ch.IsValid()))
+			{
+				var model = new CheckInRandomViewModel
+				{
+					GarageList = GetGarageListAsync().Result
+				};
+				return View(model);
+			}
 
 
-			if ((garageid == null) || (garageid <= 0)) return View(await model.ToListAsync());
-			if ((num == null) || (num <= 0)) return View(await model.ToListAsync());
+//			if ((garageid == null) || (garageid <= 0)) return View(await model.ToListAsync());
+//			if ((num == null) || (num <= 0)) return View(await model.ToListAsync());
 
 			var garage = await _context.Garages.FirstOrDefaultAsync(g => g.Id == garageid);
 			if (garage == null) return View("_Msg", new MsgViewModel($"Could not find garage (id = {garageid}) to check in to"));
 
 			var fake = new FakeRepository();
 			List <VehicleType> VT = await _context.VehicleTypes.ToListAsync();
-			int checkinNum = num > 100 ? 100 : (int)num;
+			int checkinNum = numvehicles > 100 ? 100 : (int)numvehicles;
 			int counter = 0;
 			int personcounter = 0;
 			Person newperson;
@@ -370,6 +382,18 @@ namespace Garage3.Controllers
 				}
 			}
 			return View("_Msg", new MsgViewModel($" {personcounter} People was created. {counter} Vehicles was parked"));
+		}
+
+		public IActionResult IsFreeSlots(int GarageId)
+		{
+			if (FreeSlots(GarageId).Result > 0) return Json(true);
+			return Json(false);
+		}
+
+		public IActionResult IsRandomVehicles(int NumVehicles)
+		{
+			if ((NumVehicles > 0) && (NumVehicles <= 100)) return Json(true);
+			return Json(false);
 		}
 
 		public async Task<IActionResult> TestPark()
