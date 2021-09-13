@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ParkedVehicleViewModel>
+﻿@model IEnumerable<SearchVehicleViewModel>
 <partial name="_OverViewsMenu" />
 
 <table class="table">
@@ -28,6 +28,7 @@
 		}
 	</tbody>
 </table>
-@if (Model.FirstOrDefault() == null) { 
-	<p>No Vehicles found</p>
+@if (Model.FirstOrDefault() == null)
+{
+	<p>No vehicles found</p>
 }

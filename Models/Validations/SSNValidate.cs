@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 using static Garage3.Models.Validations.PersonIdentity;
 using Microsoft.EntityFrameworkCore;
 using Garage3.Data;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Garage3.Models.Validations
 {
@@ -35,7 +38,9 @@ namespace Garage3.Models.Validations
 
             if (pid.IdentityType == PersonIdentityType.Personnummer)
             {
-                if (IsUniqueSSN(SSN))
+                var result = IsUniqueSSN(SSN);
+
+                if (result)
                 {
                     return ValidationResult.Success;
                 }
@@ -53,12 +58,9 @@ namespace Garage3.Models.Validations
         }
 
         // SSN should only be allowed to be registered once
-        private Boolean IsUniqueSSN(string SSN)
+        private bool IsUniqueSSN(string SSN)
         {
-            var person = db.Persons.FirstOrDefaultAsync(p => p.SSN == SSN);
-            if (person == null) return true;
-
-            return false;   
+            return ! db.Persons.Any(p => p.SSN == SSN); // Dimitris Way in University / StundentsController
         }
 
     }
