@@ -26,8 +26,18 @@ namespace Garage3.Models.Validations
             // Get handle to the Database _context
             db = (Garage3Context)validationContext.GetService(typeof(Garage3Context));
 
-            Id = ((Person)validationContext.ObjectInstance).Id;
-            
+//			var x = validationContext.ObjectInstance as Person;
+//			if (x == null) { var x = validationContext.ObjectInstance as PersonsViewModel; }
+
+			if (validationContext.ObjectInstance as Person != null)
+			{
+				Id = ((Person)validationContext.ObjectInstance).Id;
+			}
+			else { Id = ((PersonsViewModel)validationContext.ObjectInstance).Id; }
+
+
+//			Id = ((Person)validationContext.ObjectInstance).Id;
+
             string SSN = objectSSN.ToString();
 
             if (SSN.Length != 13) return new ValidationResult($"Invalid SSN. Format SSN as yyyymmdd-xxxx");
