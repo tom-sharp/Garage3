@@ -22,7 +22,7 @@ namespace Garage3.Models
 		public string Email { get; set; }
 
 		[Required]
-		//[SSNValidate(18)]
+		[SSNValidate(18)]
 		public string SSN { get; set; }
 
 		[Required]
