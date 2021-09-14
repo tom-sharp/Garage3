@@ -65,7 +65,7 @@ namespace Garage3.Controllers
 
 			if (model1 == null)
 			{
-				ViewBag.Message = "notexits";
+				ViewBag.Message = "This email is not registered";
 				return View();
 			}
 			else
